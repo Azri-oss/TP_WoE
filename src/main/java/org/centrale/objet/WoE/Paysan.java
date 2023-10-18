@@ -4,6 +4,8 @@
  */
 package org.centrale.objet.WoE;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author 33651
@@ -24,16 +26,20 @@ public class Paysan extends Personnage {
      * @param distAttMax Distance d'attaque maximale
      * @param nom Nom du paysan
      * @param pos Position du paysan
+     * @param inventaire
+     * @param effets
      */
-    public Paysan(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos) {
-        super(ptVie, degAtt, ptPar, pageAtt, pagePar, distAttMax, nom, pos);
+       public Paysan(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos, ArrayList<Utilisable> inventaire,ArrayList<Utilisable> effets) {
+        super(ptVie, degAtt, ptPar, pageAtt, pagePar, distAttMax, nom, pos, inventaire, effets);
+        this.setLettre("P");
     }
 
     /**
      *Constructeur par defaut
      */
     public Paysan(){
-        
+        super();
+        this.setLettre("P");
     }
     
     /**
@@ -42,6 +48,7 @@ public class Paysan extends Personnage {
      */
     public Paysan(Paysan p){
         super((Personnage)p);
+        this.setLettre("P");
     }
 
     /**

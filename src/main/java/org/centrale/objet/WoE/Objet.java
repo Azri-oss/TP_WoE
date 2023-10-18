@@ -6,7 +6,7 @@ package org.centrale.objet.WoE;
  * @author 33651
  */
 
-public class Objet {
+public abstract class Objet extends ElementDeJeu{
     private int nombre;
     private String nom;
     private Point2D pos;
@@ -83,12 +83,9 @@ public class Objet {
         this.nom = nom;
     }
     
-    /**
-     *Modifie la position d'un objet
-     * @param pos position
-     */
-    public void setPos(Point2D pos) {
-        this.pos = pos;
-    }
+
+    
+    
+
     
 }

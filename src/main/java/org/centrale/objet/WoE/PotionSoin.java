@@ -12,8 +12,9 @@ package org.centrale.objet.WoE;
  * 
  * Classe de l'objet : Potion de soin
  */
-public class PotionSoin extends Objet {
+public class PotionSoin extends Objet implements Utilisable{
     private int ptSoin;
+    private String lettre ="o";
 
     /**
      *Constructeur principal
@@ -63,7 +64,23 @@ public class PotionSoin extends Objet {
      *Methode qui augmente les PV de la créature qui prend la potion
      * @param pers Creature qui se soigne avec la potion
      */
-    public void soigner(Creature pers){
+    @Override
+    public void utiliser(Creature pers){
         pers.setPtVie(getPtSoin()+pers.getPtVie());
     }
+        @Override
+    public String toString() {
+        return "PotionSoin{" + "ptSoin=" + ptSoin + '}';
+    }
+
+    public String getLettre() {
+        return lettre;
+    }
+
+    public void setLettre(String lettre) {
+        this.lettre = lettre;
+    }
+    
+    
 }
+

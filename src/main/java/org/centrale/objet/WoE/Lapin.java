@@ -7,6 +7,8 @@
  */
 package org.centrale.objet.WoE;
 
+import java.util.ArrayList;
+
 
 /** Classe du monstre : Lapin
  * 
@@ -21,16 +23,21 @@ public class Lapin extends Monstre {
      * @param pageAtt Pourcentage de reussite d'attaque
      * @param pagePar Pourcentage de reussite de parade
      * @param pos Position du lapin
+     * @param distAttMax
+     * @param inventaire
+     * @param effets
      */
-    public Lapin(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos) {
-        super(ptVie, degAtt, ptPar, pageAtt, pagePar, pos);
+   public Lapin(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos, int distAttMax,ArrayList<Utilisable> inventaire,ArrayList<Utilisable> effets) {
+        super(ptVie, degAtt, ptPar, pageAtt, pagePar, pos, distAttMax, inventaire,effets);
+        this.setLettre("L");
     }
     
     /**
      *Constructeur par défaut
      */
     public Lapin(){
-        
+        super();
+        this.setLettre("L");
     }
 
     /**
@@ -39,6 +46,7 @@ public class Lapin extends Monstre {
      */
     public Lapin(Lapin l){
         super((Monstre)l);
+        this.setLettre("L");
     }
 
     /**

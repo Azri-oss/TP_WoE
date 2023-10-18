@@ -10,11 +10,28 @@ package org.centrale.objet.WoE;
 public class ProjetTP {
 
     public static void main(String[] args) {
-        World w = new World();
-        w.creeMondeAlea();
-        w.affichePositions();
+         World w = new World();
+         /**
+        
+        
         System.out.println("Le nombre de pv total est de : "+ w.ptVieIterateurs());
-        int tour = w.tourDeJeu(1);
+        int tour = w.tourDeJeu(1); **/
+          
+        int tours = 20;
+        int t =0;
+        
+        Joueur jou= new Joueur();
+        
+        //Joueur jou= j.choixperso();
+        w.creeMondeAlea(jou);
+        
+        t = 1;
+        w.affichage(jou);
+        
+        while(t<tours){
+            t= w.tourDeJeu(t,jou);
+        }
+              
         //System.out.println(tour);
         /**
          * System.out.println("Déplacement ..."); w.getBugs()[0].deplace();

@@ -1,87 +1,124 @@
-
 package org.centrale.objet.WoE;
+
 import java.util.*;
+
 /**
  *
  * @author 33651
  */
-
-/** Classe Créature
- * 
+/**
+ * Classe Créature
+ *
  */
-public abstract class  Creature {
+public abstract class Creature extends ElementDeJeu implements Deplacable {
+
     private int ptVie;
     private int degAtt;
     private int ptPar;
     private int pageAtt;
     private int pagePar;
-    private Point2D pos; 
+    private int distAttMax;
+    private String lettre;
+    private boolean estJoueur;
+    private ArrayList<Utilisable> inventaire;
+    public ArrayList<Utilisable> effets;
 
     /**
-     *Constructeur principal
+     * Constructeur principal
+     *
      * @param ptVie Points de vie
      * @param degAtt Dégâts d'attaque
      * @param ptPar Points de parade
      * @param pageAtt Pourcentage de reussite d'une attaque
      * @param pagePar Pourcentage de reussite d'une parade
      * @param pos Position de la creature
+     * @param distAttMax
+     * @param inventaire
+     * @param effets
      */
-    public Creature(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos) {
+    public Creature(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos, int distAttMax, ArrayList<Utilisable> inventaire, ArrayList<Utilisable> effets) {
+        super(pos);
         this.ptVie = ptVie;
         this.degAtt = degAtt;
         this.ptPar = ptPar;
         this.pageAtt = pageAtt;
         this.pagePar = pagePar;
-        this.pos = pos;
+
+        this.distAttMax = distAttMax;
+        this.inventaire = inventaire;
+        this.effets = effets;
+
+        this.estJoueur = false;
     }
 
     /**
-     *Constructeur par défaut
+     * Constructeur par défaut
      */
     public Creature() {
+        super();
         this.ptVie = 10;
         this.degAtt = 2;
         this.ptPar = 2;
         this.pageAtt = 2;
         this.pagePar = 2;
-        Point2D pdep=new Point2D();
-        this.pos = pdep;
+        this.distAttMax = 1;
+        this.inventaire = new ArrayList<>();
+        this.effets = new ArrayList<>();
+        this.estJoueur = false;
     }
 
     /**
-     *Constructeur de copie
+     * Constructeur de copie
+     *
      * @param c Creature
      */
-    public Creature(Creature c){
-        this.ptVie = c.getPtVie() ;
+    public Creature(Creature c) {
+        super((ElementDeJeu) c);
+        this.ptVie = c.getPtVie();
         this.degAtt = c.getDegAtt();
         this.ptPar = c.getPtPar();
         this.pageAtt = c.getPageAtt();
         this.pagePar = c.getPagePar();
-        this.pos = new Point2D(c.getPos());  
-        
-        
+        this.distAttMax = c.distAttMax;
+        this.inventaire = c.getInventaire();
+        this.effets = c.effets;
+        this.estJoueur = false;
+
     }
-    
-    
 
+    public ArrayList<Utilisable> getEffets() {
+        return effets;
+    }
 
-    
-     /**Renvoie la valeur des points de vie
-     * @return ptVie le nombre de point de vie 
+    public ArrayList<Utilisable> getInventaire() {
+        return inventaire;
+    }
+
+    public int getDistAttMax() {
+        return distAttMax;
+    }
+
+    /**
+     * Renvoie la valeur des points de vie
+     *
+     * @return ptVie le nombre de point de vie
      */
-   public int getPtVie() {
+    public int getPtVie() {
         return ptVie;
     }
-    /** Récupère les dégats d'attaque
+
+    /**
+     * Récupère les dégats d'attaque
      *
      * @return degAtt le nombre de dégats d'attaque
-     * 
+     *
      */
     public int getDegAtt() {
         return degAtt;
     }
-    /**Récupère les points de parade
+
+    /**
+     * Récupère les points de parade
      *
      * @return ptPar le nombre de points de parade
      */
@@ -89,8 +126,17 @@ public abstract class  Creature {
         return ptPar;
     }
 
+    public boolean isEstJoueur() {
+        return estJoueur;
+    }
+
+    public void setEstJoueur(boolean estJoueur) {
+        this.estJoueur = estJoueur;
+    }
+
     /**
-     *Récupère le pourcentage de reussite d'une attaque
+     * Récupère le pourcentage de reussite d'une attaque
+     *
      * @return pageAtt le pourcentage de reussite d'une attaque
      */
     public int getPageAtt() {
@@ -98,38 +144,51 @@ public abstract class  Creature {
     }
 
     /**
-     *Récupère le pourcentage de reussite d'une parade
+     * Récupère le pourcentage de reussite d'une parade
+     *
      * @return pagePar le pourcentage de reusssite d'une parade
      */
     public int getPagePar() {
         return pagePar;
     }
 
-    /**
-     *Récupère la position de la creature
-     * @return pos la position de la creature
-     */
-    public Point2D getPos() {
-        return pos;
+    public void setInventaire(ArrayList<Utilisable> inventaire) {
+        this.inventaire = inventaire;
     }
 
-    
+    public void setDistAttMax(int distAttMax) {
+        this.distAttMax = distAttMax;
+    }
+
+    public void setEffets(ArrayList<Utilisable> effets) {
+        this.effets = effets;
+    }
+
     /**
-     *Modifie le nombre de points de vie d'une creature
+     * Modifie le nombre de points de vie d'une creature
+     *
      * @param ptVie le nombre de point de vie
      */
     public void setPtVie(int ptVie) {
         this.ptVie = ptVie;
+        if (this.ptVie <= 0) {
+            System.out.println(this.toString() + " est mort(e)");
+            this.getPos().setX(-10);
+        }
     }
+
     /**
-     *Modifie les dégats d'attaque de la creature
+     * Modifie les dégats d'attaque de la creature
+     *
      * @param degAtt le nombre de dégats infligés
      */
     public void setDegAtt(int degAtt) {
         this.degAtt = degAtt;
     }
+
     /**
-     *Modifie les points de parade de la creature
+     * Modifie les points de parade de la creature
+     *
      * @param ptPar le nmbre de points de parade
      */
     public void setPtPar(int ptPar) {
@@ -137,7 +196,8 @@ public abstract class  Creature {
     }
 
     /**
-     *Modifie le pourcentage de réussite d'une attaque de la creature
+     * Modifie le pourcentage de réussite d'une attaque de la creature
+     *
      * @param pageAtt le pourcentage de réussite d'une attaque
      */
     public void setPageAtt(int pageAtt) {
@@ -145,77 +205,152 @@ public abstract class  Creature {
     }
 
     /**
-     *Modifie le pourcentage de réussite d'une parade
+     * Modifie le pourcentage de réussite d'une parade
+     *
      * @param pagePar le pourcentage de reussite d'une parade
      */
     public void setPagePar(int pagePar) {
         this.pagePar = pagePar;
     }
 
-    /**
-     *Modifie la position de la creature
-     * @param pos Position de la Creature
-     */
-    public void setPos(Point2D pos) {
-        this.pos = pos;
+    public String getLettre() {
+        return lettre;
     }
-    
-     /**
-     *Methode qui affiche la position en 2D du personnage
-     */
-    public void affiche(){
-        System.out.println("[" + pos.getX() + ";" + pos.getY() + "]");
-    }
-    
-/**
-     *Déplace une créature sur une case adjacente
-     * 
-     */
-    public void deplace() {
-        Random generateur = new Random();
-        int entierAleatoire = generateur.nextInt(7);
-        switch (entierAleatoire) {
-            case 0:
-                pos.translate(-1, -1);
-                break;
-            case 1:
-                pos.translate(-1, 0);
-                break;
-            case 2:
-                pos.translate(-1, 1);
-                break;
-            case 3:
-                pos.translate(0, 1);
-                break;
-            case 4:
-                pos.translate(1, 1);
-                break;
-            case 5:
-                pos.translate(1, 0);
-                break;
-            case 6:
-                pos.translate(1, -1);
-                break;
-            case 7:
-                pos.translate(0, -1);
-                break;
-        }
+
+    public void setLettre(String lettre) {
+        this.lettre = lettre;
     }
 
     /**
-     *Methode qui dit si la potion est consommé ou nom par la creature, dans ce cas elle modifie les points de vie de la creature.
+     *
+     * @param w
+     * @return
+     */
+    public int[] testPresenceAlentour(World w) {
+        int[] alentours = new int[8];
+        for (int k = 0; k < alentours.length; k++) {
+            alentours[k] = 0;
+        }
+        int r = 0;
+        for (int j = -1; j < 2; j++) {
+            for (int i = -1; i < 2; i++) {
+                if (i != 0 || j != 0) {
+
+                    this.setPos(new Point2D(this.getPos().getX() + i, this.getPos().getY() + j));
+
+                    if (w.testCaseOccupeePerso(this, w.creatures)) {
+
+                        alentours[r] = 1;
+
+                    }
+                    r = r + 1;
+                    this.setPos(new Point2D(this.getPos().getX() - i, this.getPos().getY() - j));
+                }
+
+            }
+        }
+
+        return alentours;
+    }
+
+    /**
+     * Déplace une créature sur une case adjacente
+     *
+     */
+    /**
+     * public boolean caseAccessible(int dx, int dy) { return
+     * ((this.getPos().getX() + dx >= 0) && (this.getPos().getX() + dx < World.LARGEUR) && (this.getPos().getY() + dy
+     * >= 0) && (this.getPos().getY() + dy < World.HAUTEUR));
+    }*
+     * @param w
+     */
+
+    @Override
+    public void deplace(World w) {
+        Random generateur = new Random();
+        int[] l = testPresenceAlentour(w);
+        int rs = 8;
+        int compt = 0;
+        /**
+         * Compte combien il y a de cases disponibles*
+         */
+        for (int i = 0; i < 8; i++) {
+            if (l[i] == 0) {
+                compt = compt + 1;
+
+            }
+        }
+        if (compt > 0) {
+            int entierAleatoire = generateur.nextInt(compt)+1;
+            int compt2 = 0;
+            for (int j = 0; j < 8; j++) {
+                if (l[j] == 0) {
+                    compt2 = compt2 + 1;
+                    if (compt2 == entierAleatoire) {
+                        rs = j;
+                    }
+                }
+            }
+
+            switch (rs) {
+                case 0:
+                    getPos().translate(-1, -1);
+                    break;
+                case 1:
+                    getPos().translate(0, -1);
+                    break;
+                case 2:
+                    getPos().translate(1, -1);
+                    break;
+                case 3:
+                    getPos().translate(-1, 0);
+                    break;
+                case 4:
+                    getPos().translate(1, 0);
+                    break;
+                case 5:
+                    getPos().translate(-1, 1);
+                    break;
+                case 6:
+                    getPos().translate(0, 1);
+                    break;
+                case 7:
+                    getPos().translate(1, 1);
+                    break;
+                default:
+                    System.out.println("Erreur");
+            }
+        } else {
+            System.out.println("La créature ne peut pas bouger");
+        }
+
+    }
+
+    /**
+     * Methode qui dit si la potion est consommé ou nom par la creature, dans ce
+     * cas elle modifie les points de vie de la creature.
+     *
      * @param ps Objet : Potion de Soin
      * @return booleen Vrai si il potion est consommée, Faux autrement
      */
-    public boolean consommation(PotionSoin ps){
-        if (getPos().distance(ps.getPos())==0){
-            setPtVie(ps.getPtSoin()+getPtVie());
-            System.out.println(toString()+ "a récupéré " + ps.getPtSoin());
-            ps=null;
-            return true;}
-            else{ return false;}
-    
-     }
-}
+    public boolean consommation(PotionSoin ps) {
+        if (getPos().distance(ps.getPos()) == 0) {
+            setPtVie(ps.getPtSoin() + getPtVie());
+            System.out.println(toString() + "a récupéré " + ps.getPtSoin());
+            return true;
+        } else {
+            return false;
+        }
 
-     
+    }
+
+    public void ajoutinventaire(Utilisable o, World w) {
+        inventaire.add(o);
+        w.objets.remove(o);
+    }
+
+    public void retirerinventaire(Utilisable o) {
+        inventaire.remove(o);
+
+    }
+}

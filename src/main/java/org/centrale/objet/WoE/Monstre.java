@@ -5,6 +5,7 @@
  * @author 33651
  */
 package org.centrale.objet.WoE;
+import java.util.ArrayList;
 
 /** Classe Monstre
  * 
@@ -23,8 +24,8 @@ public abstract class Monstre extends Creature{
      */
     
     
-public Monstre(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos){
-    super(ptVie,degAtt,ptPar,pageAtt, pagePar,pos);
+public Monstre(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos, int distAttMax,ArrayList<Utilisable> inventaire,ArrayList<Utilisable> effets){
+    super(ptVie,degAtt,ptPar,pageAtt, pagePar,pos,distAttMax, inventaire, effets);
 }
     /**
      *Constructeur de copie

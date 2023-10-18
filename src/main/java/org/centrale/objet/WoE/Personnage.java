@@ -6,6 +6,8 @@
  */
 package org.centrale.objet.WoE;
 
+import java.util.ArrayList;
+
     /**
      * 
      * Classe rassemblant tous les types de personnage
@@ -13,7 +15,6 @@ package org.centrale.objet.WoE;
 public abstract class Personnage extends Creature {
     
 
-    private int distAttMax;
     private String nom;
 
 /**Constructeur de personnages à partir de plusieurs caractéristiques
@@ -26,29 +27,28 @@ public abstract class Personnage extends Creature {
  * @param distAttMax distance maximale d'attaque
  * @param nom nom du personnage
  * @param pos position du personnage
+     * @param inventaire
+     * @param effets
  * 
  */
-    public Personnage(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos) {
-        super(ptVie,degAtt,ptPar,pageAtt, pagePar,pos);
-        this.distAttMax = distAttMax;
+    public Personnage(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos, ArrayList<Utilisable> inventaire,ArrayList<Utilisable> effets) {
+        super(ptVie,degAtt,ptPar,pageAtt, pagePar,pos, distAttMax, inventaire, effets);
         this.nom = nom;  
     }
 
 /** Constructeur de personnage sans paramètre d'entrée
  */
     public Personnage(){
-        this.distAttMax = 2;
         this.nom = "Hercule";
        
     }
     
     /**
-     *Constructeur de personnage à partir d'un objet
+     *Constructeur de personnage à partir d'un personnage
      * @param pers personnage
      */
     public Personnage(Personnage pers){
         super((Creature) pers);
-        this.distAttMax = pers.getDistAttMax();
         this.nom = pers.getNom();
         
     }
@@ -61,13 +61,6 @@ public abstract class Personnage extends Creature {
  public String getNom() {
         return nom;
     }
- /**
-  * Récupère la portée du personnage
-  * @return  distAttMax Distance Maximale d'attaque
-  */
- public int getDistAttMax() {
-        return distAttMax;
-    }
 
     /**
      *Modifie le nom du personnage
@@ -76,13 +69,9 @@ public abstract class Personnage extends Creature {
     public void setNom(String nom) {
         this.nom = nom;
     }
-    /**
-     *Modifie la portée du personnage
-     * @param distAttMax la distance maximale à laquelle on peut attaquer 
-     */
-    public void setDistAttMax(int distAttMax) {
-        this.distAttMax = distAttMax;
-    }
+
+
+
     
    
     

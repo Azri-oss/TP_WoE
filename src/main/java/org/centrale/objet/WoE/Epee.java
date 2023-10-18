@@ -9,9 +9,10 @@ package org.centrale.objet.WoE;
  * 
  * Classe de l'objet : Epee
  */
-public class Epee extends Objet {
+public class Epee extends Objet implements Utilisable{
    private int BDegAtt;
-   private int DistMax;
+   private String lettre="o";
+
    
     /**
      *Constructeur par défaut
@@ -19,21 +20,21 @@ public class Epee extends Objet {
     public Epee() {
         super();
         this.BDegAtt = 6;
-        this.DistMax = 2;
+
     }
 
     /**
      *Constructeur principal
      * @param BDegAtt Bonus de dégats d'attaque donnée par l'épée
-     * @param DistMax Distance maximale d'attque avec l'épée
+    
      * @param nombre Nombre d'épée
      * @param nom Nom de l'épée
      * @param pos Position de l'épée
      */
-    public Epee(int BDegAtt, int DistMax, int nombre, String nom, Point2D pos) {
+    public Epee(int BDegAtt, int nombre, String nom, Point2D pos) {
         super(nombre, nom, pos);
         this.BDegAtt = BDegAtt;
-        this.DistMax = DistMax;    
+         
     }
 
     /**
@@ -43,7 +44,7 @@ public class Epee extends Objet {
     public Epee(Epee e){
         super((Objet) e);
         this.BDegAtt=e.getBDegAtt();
-        this.DistMax=e.getDistMax();
+;
     }
     
     /**
@@ -52,7 +53,7 @@ public class Epee extends Objet {
      */
     @Override
     public String toString() {
-        return "Epee{" + "BDegAtt=" + BDegAtt + ", DistMax=" + DistMax + '}';
+        return "Epee{" + "BDegAtt=" + BDegAtt +  '}';
     }
 
     /**
@@ -63,13 +64,7 @@ public class Epee extends Objet {
         return BDegAtt;
     }
 
-    /**
-     *Récupère la valeur de la portée maximale
-     * @return DistMax Distance maximale
-     */
-    public int getDistMax() {
-        return DistMax;
-    }
+  
 
     /**
      *Modifie le bonus d'attaque d'une épée
@@ -80,18 +75,26 @@ public class Epee extends Objet {
     }
 
     /**
-     *Modifie la portée de l'épée
-     * @param DistMax Portée maximale
-     */
-    public void setDistMax(int DistMax) {
-        this.DistMax = DistMax;
-    }
-
-    /**
      *Methode qui modifie les PVs 
      * @param p1 Creature
      */
     public void degats(Creature p1){
        p1.setPtVie(p1.getPtVie()-BDegAtt);
    }
+    
+   @Override
+    public void utiliser(Creature c){
+        degats(c);
+        
+    }
+
+    public String getLettre() {
+        return lettre;
+    }
+
+    public void setLettre(String lettre) {
+        this.lettre = lettre;
+    }
+
+
 }
