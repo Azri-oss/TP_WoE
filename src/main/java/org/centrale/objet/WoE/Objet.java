@@ -63,10 +63,16 @@ public abstract class Objet extends ElementDeJeu{
      *Récupère la position d'un objet
      * @return pos position
      */
+    @Override
     public Point2D getPos() {
         return pos;
     }
     
+    /**
+     *Fixe la position de l'objet
+     * @param pos
+     */
+    @Override
     public void setPos(Point2D pos){
         this.pos = pos;
     }
@@ -86,6 +92,7 @@ public abstract class Objet extends ElementDeJeu{
     public void setNom(String nom) {
         this.nom = nom;
     }
+    
     
 
     

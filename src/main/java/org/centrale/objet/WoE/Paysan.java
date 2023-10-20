@@ -26,8 +26,8 @@ public class Paysan extends Personnage {
      * @param distAttMax Distance d'attaque maximale
      * @param nom Nom du paysan
      * @param pos Position du paysan
-     * @param inventaire
-     * @param effets
+     * @param inventaire ArrayList comprenant les utilisables de l'inventaire
+     * @param effets ArrayList comprenant les utilisables en fonctionnement
      */
        public Paysan(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos, ArrayList<Utilisable> inventaire,ArrayList<Utilisable> effets) {
         super(ptVie, degAtt, ptPar, pageAtt, pagePar, distAttMax, nom, pos, inventaire, effets);
@@ -40,6 +40,61 @@ public class Paysan extends Personnage {
     public Paysan(){
         super();
         this.setLettre("P");
+        String[] listeNoms = {
+            "Alden",
+            "Branwen",
+            "Cedric",
+            "Daelin",
+            "Elinor",
+            "Faelan",
+            "Gwendolyn",
+            "Halvor",
+            "Ismene",
+            "Jareth",
+            "Kaelith",
+            "Lorelei",
+            "Maelis",
+            "Nerys",
+            "Orin",
+            "Pryderi",
+            "Quinlan",
+            "Rhoslyn",
+            "Sylvan",
+            "Talwyn",
+            "Urien",
+            "Vaelora",
+            "Wynne",
+            "Xander",
+            "Ysolde",
+            "Zephyr",
+            "Auberon",
+            "Brynn",
+            "Cassia",
+            "Darian",
+            "Elowen",
+            "Faelan",
+            "Galen",
+            "Hawthorn",
+            "Ilythia",
+            "Jorunn",
+            "Kaelith",
+            "Lirael",
+            "Maelis",
+            "Nerys",
+            "Oberon",
+            "Persephone",
+            "Quinlan",
+            "Ravenna",
+            "Sarai",
+            "Tavish",
+            "Una",
+            "Vaelora",
+            "Wynne",
+            "Xander",
+            "Ysolde",
+            "Zephyr"
+        };
+        nomAlea(listeNoms);
     }
     
     /**

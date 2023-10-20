@@ -21,7 +21,8 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
     private String lettre;
     private boolean estJoueur;
     private ArrayList<Utilisable> inventaire;
-    public ArrayList<Utilisable> effets;
+    private ArrayList<Utilisable> effets;
+    private boolean vivant;
 
     /**
      * Constructeur principal
@@ -32,9 +33,9 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
      * @param pageAtt Pourcentage de reussite d'une attaque
      * @param pagePar Pourcentage de reussite d'une parade
      * @param pos Position de la creature
-     * @param distAttMax
-     * @param inventaire
-     * @param effets
+     * @param distAttMax Distance maximale d'attaque
+     * @param inventaire ArrayList comprenant les utilisables de l'inventaire
+     * @param effets ArrayList comprenant les utilisables en fonctionnement
      */
     public Creature(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos, int distAttMax, ArrayList<Utilisable> inventaire, ArrayList<Utilisable> effets) {
         super(pos);
@@ -43,11 +44,10 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
         this.ptPar = ptPar;
         this.pageAtt = pageAtt;
         this.pagePar = pagePar;
-
         this.distAttMax = distAttMax;
         this.inventaire = inventaire;
         this.effets = effets;
-
+        this.vivant = true;
         this.estJoueur = false;
     }
 
@@ -56,15 +56,17 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
      */
     public Creature() {
         super();
-        this.ptVie = 10;
-        this.degAtt = 2;
-        this.ptPar = 2;
-        this.pageAtt = 2;
-        this.pagePar = 2;
+        Random g = new Random();
+        this.ptVie = 30 + g.nextInt(20);
+        this.degAtt = 20 + g.nextInt(10);
+        this.ptPar = 10 + g.nextInt(10);
+        this.pageAtt = 50 + g.nextInt(35);
+        this.pagePar = 20 + g.nextInt(15);
         this.distAttMax = 1;
         this.inventaire = new ArrayList<>();
         this.effets = new ArrayList<>();
         this.estJoueur = false;
+        this.vivant = true;
     }
 
     /**
@@ -83,17 +85,34 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
         this.inventaire = c.getInventaire();
         this.effets = c.effets;
         this.estJoueur = false;
+        this.vivant = true;
 
     }
 
+    /**
+     * Donne l'arrayList contenant les effets appliqués sur la créature
+     *
+     * @return arrayList effets
+     */
     public ArrayList<Utilisable> getEffets() {
         return effets;
     }
 
+    /**
+     * Donne l'arrayList contenant les objets présents dans l'inventaire de la
+     * créature
+     *
+     * @return ArrayList inventaire
+     */
     public ArrayList<Utilisable> getInventaire() {
         return inventaire;
     }
 
+    /**
+     * Donne la distance d'attaque maximale de la créature
+     *
+     * @return int distAttMax
+     */
     public int getDistAttMax() {
         return distAttMax;
     }
@@ -126,10 +145,20 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
         return ptPar;
     }
 
+    /**
+     * Indique si la créature est un joueur
+     *
+     * @return boolean estJoueur
+     */
     public boolean isEstJoueur() {
         return estJoueur;
     }
 
+    /**
+     * Fixe si la créature est un joueur ou non
+     *
+     * @param estJoueur
+     */
     public void setEstJoueur(boolean estJoueur) {
         this.estJoueur = estJoueur;
     }
@@ -152,14 +181,29 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
         return pagePar;
     }
 
+    /**
+     * Modifie l'inventaire de la créature
+     *
+     * @param inventaire
+     */
     public void setInventaire(ArrayList<Utilisable> inventaire) {
         this.inventaire = inventaire;
     }
 
+    /**
+     * Modifie la distance maximale d'attaque de la créature
+     *
+     * @param distAttMax
+     */
     public void setDistAttMax(int distAttMax) {
         this.distAttMax = distAttMax;
     }
 
+    /**
+     * Modifie les effets s'appliquant sur la créature
+     *
+     * @param effets
+     */
     public void setEffets(ArrayList<Utilisable> effets) {
         this.effets = effets;
     }
@@ -174,14 +218,28 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
         if (this.ptVie <= 0) {
             System.out.println(this.toString() + " est mort(e)");
             this.getPos().setX(-10);
+            vivant = false;
         }
     }
 
+    /**
+     * Modifie le nombre de points de vie d'une creature et indique qui l'a tuée
+     * le cas échéant
+     *
+     * @param ptVie
+     * @param c
+     */
     public void setPtVie(int ptVie, Creature c) {
         this.ptVie = ptVie;
         if (this.ptVie <= 0) {
-            System.out.println(this.toString() + " est mort(e), sous les coups de " + c.toString());
+            if (c instanceof Monstre) {
+                System.out.println(this.toString() + " est mort(e), sous les coups d'un " + c.toString());
+            } else {
+                System.out.println(this.toString() + " est mort(e), sous les coups de " + c.toString());
+            }
+            c.loot();
             this.getPos().setX(-10);
+            vivant = false;
         }
     }
 
@@ -221,18 +279,49 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
         this.pagePar = pagePar;
     }
 
+    /**
+     * Donne la lettre (initiale) de la créature (pour l'affichage)
+     *
+     * @return lettre
+     */
     public String getLettre() {
         return lettre;
     }
 
+    /**
+     * Fixe la lettre (initiale) de la créature (pour l'affichage)
+     *
+     * @param lettre
+     */
     public void setLettre(String lettre) {
         this.lettre = lettre;
     }
 
     /**
+     * Indique si la créature est vivante
      *
-     * @param w
-     * @return
+     * @return boolean vivant
+     */
+    public boolean isVivant() {
+        return vivant;
+    }
+
+    /**
+     * Modifie le statut vivant de la créature
+     *
+     * @param vivant
+     */
+    public void setVivant(boolean vivant) {
+        this.vivant = vivant;
+    }
+
+    /**
+     * Méthode indiquant si une créature se trouve dans les alentours du
+     * personnage
+     *
+     * @param w Monde
+     * @return int[] alentours : Liste où chaque case vaut 1 si une créature se
+     * trouve dans la direction, 0 sinon
      */
     public int[] testPresenceAlentour(World w) {
         int[] alentours = new int[8];
@@ -264,11 +353,7 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
     /**
      * Déplace une créature sur une case adjacente
      *
-     */
-    /**
-     * public boolean caseAccessible(int dx, int dy) { return
-     * ((this.getPos().getX() + dx >= 0) && (this.getPos().getX() + dx < World.LARGEUR) && (this.getPos().getY() + dy
-     * >= 0) && (this.getPos().getY() + dy < World.HAUTEUR)); }* @param w
+     * @param w Monde
      */
     @Override
     public void deplace(World w) {
@@ -326,7 +411,7 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
                     System.out.println("Erreur");
             }
         } else {
-            System.out.println("La créature ne peut pas bouger");
+            //System.out.println("La créature ne peut pas bouger");
         }
 
     }
@@ -349,27 +434,61 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
 
     }
 
+    /**
+     * Ajoute un objet à l'inventaire de la créature
+     *
+     * @param o Utilisable à ajouter à l'inventaire
+     * @param w Monde
+     */
     public void ajoutinventaire(Utilisable o, World w) {
         inventaire.add(o);
         w.objets.remove(o);
     }
 
+    /**
+     * Retire un objet de l'inventaire de la créature
+     *
+     * @param o Utilisable à retirer de l'inventaire
+     */
     public void retirerinventaire(Utilisable o) {
         inventaire.remove(o);
 
     }
 
-    public void majEffets() {
-        ArrayList<Utilisable> copie = new ArrayList<>();
-        for (Utilisable obj : effets){
-            copie.add(obj);
+    public void loot() {
+        Random g = new Random();
+        int n = g.nextInt(100);
+        Utilisable obj;
+        if (n<33){
+            obj = new PotionSoin();
+        } else if (n>66){
+            obj = new Epee();
+        } else {
+            obj = new Nourriture();
         }
+        if (this instanceof Archer) {
+            int nf = g.nextInt(2)+1;
+            ((Archer)this).setNbFleches(((Archer)this).getNbFleches()+nf);
+            if(isEstJoueur()){
+               System.out.println("En fouillant son cadavre, vous obtenez " + ((Utilisable) obj).affiche()+ " et "+ nf + " flèches");
+            }
+        } else if (isEstJoueur()){
+               System.out.println("En fouillant son cadavre, vous obtenez " + ((Utilisable) obj).affiche());
+
+        }
+        inventaire.add((Utilisable) obj);
+    }
+
+    /**
+     * Met à jour l'arrayList effets en retirant les utilisables dont la durée
+     * est nulle
+     */
+    public void majEffets() {
         for (int i = 0; i < effets.size(); i++) {
             if (effets.get(i).getDuree() == 0) {
                 effets.remove(i);
             }
-            
+
         }
-        copie = null;
     }
 }

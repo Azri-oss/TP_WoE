@@ -32,11 +32,16 @@ public class World {
     public static final int LARGEUR = 70;
 
     /**
+     * Liste des nuages (deprecié)
+     */
+    public ArrayList<NuageToxique> nuages;
+
+    /**
      * Méthode testPresence : renvoie true si la position de p est déjà
      * enregistrée dans l'array positions
      *
-     * @param p
-     * @param positions
+     * @param c
+     * @param creatures
      * @return boolean
      */
     public boolean testCaseOccupeePerso(ElementDeJeu c, ArrayList<Creature> creatures) {
@@ -48,6 +53,15 @@ public class World {
         return false;
     }
 
+    /**
+     * Vérifie si la case où la créature souhaite se déplacer est occupée ou
+     * hors de la zone de jeu
+     *
+     * @param p Point2D de la position souhaitée
+     * @param c Creature se déplaçant
+     * @param creatures ArrayList comprenant toutes les créatures
+     * @return boolean
+     */
     public boolean testCaseOccupeePerso(Point2D p, Creature c, ArrayList<Creature> creatures) {
         for (Creature creature : creatures) {
             if (creature.getPos().distance(p) == 0 && (c != creature) || p.getX() >= LARGEUR || p.getY() >= HAUTEUR || p.getX() < 0 || p.getY() < 0) {
@@ -57,6 +71,14 @@ public class World {
         return false;
     }
 
+    /**
+     * Indique si la case est occupée par un objet (pour pas que deux objets ne
+     * se situent sur la même case)
+     *
+     * @param o Objet à tester
+     * @param objets Liste des objets sur le monde
+     * @return boolean
+     */
     public boolean testCaseOccupeeObj(Utilisable o, ArrayList<Utilisable> objets) {
         for (Utilisable ob : objets) {
             if ((ob.getPos().distance(o.getPos()) == 0 && !(o.equals(ob))) || (o.getPos().getX() >= LARGEUR) || (o.getPos().getY() >= HAUTEUR) || (o.getPos().getX() < 0) || (o.getPos().getY() < 0)) {
@@ -191,7 +213,9 @@ public class World {
      * @return tour+1
      */
     public int tourDeJeu(int tour, Joueur jou) {
+        this.affichage(jou);
         System.out.println("Début du tour " + tour);
+        
 
         System.out.println("Action du joueur ...");
         jou.choixaction(this);
@@ -200,7 +224,7 @@ public class World {
         for (Creature c : creatures) {
             choixactionPNJ(c);
         }
-        this.affichage(jou);
+        
         for (Creature c : creatures) {
             for (Utilisable obj : c.getEffets()) {
                 int dur = obj.getDuree();
@@ -217,6 +241,13 @@ public class World {
         return tour + 1;
     }
 
+    /**
+     * Séquence de l'action d'une créature non joueuse. Celle-ci chosit
+     * aléatoirement une action en fonction des possibilités que lui offre sa
+     * position
+     *
+     * @param c
+     */
     public void choixactionPNJ(Creature c) {
 
         if (c.isEstJoueur() == false) {
@@ -268,59 +299,66 @@ public class World {
             /*attaque ou pas*/
             choix.add(3);
 
-            int sol = action.nextInt(choix.size());
 
-            switch (choix.get(sol)) {
+            if (posscombat == 1 && (action.nextInt(100)<40)) {
+                int vic = action.nextInt(adv.size());
+                ((Combattant) c).combattre(adv.get(vic));
+            } else {
+                int sol = action.nextInt(choix.size());
+                switch (choix.get(sol)) {
 
-                case 0:
+                    case 0:
 
-                    //System.out.println(c.getInventaire());
-                    int S = c.getInventaire().size();
-                    //System.out.println(S);
+                        //System.out.println(c.getInventaire());
+                        int S = c.getInventaire().size();
+                        //System.out.println(S);
 
-                    int choixobj = action.nextInt(S);
+                        int choixobj = action.nextInt(S);
 
-                    c.getInventaire().get(choixobj).utiliser(c);
-                    //System.out.println("Le PNJ " + c.toString() + "utilise l'objet" + c.getInventaire().get(choixobj).getNom());
-                    c.retirerinventaire(c.getInventaire().get(choixobj));
+                        c.getInventaire().get(choixobj).utiliser(c);
+                        //System.out.println("Le PNJ " + c.toString() + "utilise l'objet" + c.getInventaire().get(choixobj).getNom());
+                        c.retirerinventaire(c.getInventaire().get(choixobj));
 
-                    break;
+                        break;
 
-                case 1:
-                    c.deplace(this);
-                    //System.out.println("Le PNJ c'est déplacé en " + c.getPos());
-                    break;
+                    case 1:
+                        c.deplace(this);
+                        //System.out.println("Le PNJ c'est déplacé en " + c.getPos());
+                        break;
+                    case 3:
+                        //System.out.println("Le PNJ " + c.toString() + " a décidé de ne rien faire.");
+                        break;
+                    case 4:
+                        int choix2 = action.nextInt(2);
+                        /* Ranger*/
+                        if (choix2 == 0) {
+                            c.ajoutinventaire(u, this);
+                            //System.out.println("Le PNJ " + c.toString() + "a ajouté l'objet " + u.getNom() + "à son inventaire" + c.getInventaire());
+                        } /*Utiliser directement*/ else {
+                            u.utiliser(c);
+                            c.getEffets().add(u);
 
-                case 2:
-                    int vic = action.nextInt(adv.size());
-                    ((Combattant) c).combattre(adv.get(vic));
-                    break;
-                case 3:
-                    //System.out.println("Le PNJ " + c.toString() + " a décidé de ne rien faire.");
-                    break;
-                case 4:
-                    int choix2 = action.nextInt(2);
-                    /* Ranger*/
-                    if (choix2 == 0) {
-                        c.ajoutinventaire(u, this);
-                        //System.out.println("Le PNJ " + c.toString() + "a ajouté l'objet " + u.getNom() + "à son inventaire" + c.getInventaire());
-                    } /*Utiliser directement*/ else {
-                        u.utiliser(c);
-                        c.getEffets().add(u);
+                            objets.remove(u);
+                            //System.out.println("Le PNJ " + c.toString() + "a utilisé l'objet " + u.getNom());
 
-                        objets.remove(u);
-                        //System.out.println("Le PNJ " + c.toString() + "a utilisé l'objet " + u.getNom());
+                        }
+                        break;
+                    default:
+                        break;
 
-                    }
-                    break;
-                default:
-                    break;
-
+                }
             }
         }
 
     }
 
+    /**
+     * Affiche le monde dans le terminal en décrivant chaque créature par sa
+     * lettre initiale, et chaque objet par la lettre "o". Affiche également les
+     * caractéristiques du joueur, son inventaire et ses effets.
+     *
+     * @param joueur
+     */
     public void affichage(Joueur joueur) {
         String s;
         Boolean r;
@@ -367,6 +405,10 @@ public class World {
                 case 4:
                     s = (s + space + space + "Pourcentage de réussite de contre : " + joueur.getPers().getPagePar() + "%");
                     break;
+                case 5:
+                    if(joueur.getType().equals("Archer")){
+                        s = (s + space + space + "Nombre de flèches : "+((Archer)joueur.getPers()).getNbFleches());
+                    }
                 case 6:
                     s = (s + space + space + "INVENTAIRE");
                     break;
@@ -391,11 +433,37 @@ public class World {
     }
 
     /**
+     *
+     * @param tour
+     */
+    public void progressionNuage(int tour) {
+
+    }
+
+    /**
+     * Vérifie si l'ensemble des créatures sont mortes : si c'est le cas,
+     * renvoie true
+     *
+     * @return boolean
+     */
+    public boolean testVictoire() {
+        for (Creature c : creatures) {
+            if (!c.isEstJoueur()) {
+                if (c.isVivant()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Constructeur
      */
     public World() {
         creatures = new ArrayList<>();
         objets = new ArrayList<>();
+        nuages = new ArrayList<>();
     }
 
 }

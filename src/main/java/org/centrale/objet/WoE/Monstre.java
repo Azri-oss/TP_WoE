@@ -21,6 +21,9 @@ public abstract class Monstre extends Creature{
      * @param pageAtt Pourcentage de reussite d'une attaque
      * @param pagePar Pourcentage de reussite d'une parade
      * @param pos position du monstre
+     * @param distAttMax Distance maximale d'attaque
+     * @param inventaire ArrayList comprenant les utilisables de l'inventaire
+     * @param effets ArrayList comprenant les utilisables en fonctionnement
      */
     
     

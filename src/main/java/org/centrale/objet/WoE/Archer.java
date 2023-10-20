@@ -30,10 +30,10 @@ public class Archer extends Personnage implements Combattant {
      * @param distAttMax Distance d'attque maximale
      * @param nom Nom de l'archer
      * @param pos Position de l'acher
-     * @param inventaire
-     * @param effets
+     * @param inventaire ArrayList comprenant les utilisables de l'inventaire
+     * @param effets ArrayList comprenant les utilisables en fonctionnement
      */
-    public Archer(int nbFleches, int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos,ArrayList<Utilisable> inventaire, ArrayList<Utilisable> effets) {
+    public Archer(int nbFleches, int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos, ArrayList<Utilisable> inventaire, ArrayList<Utilisable> effets) {
         super(ptVie, degAtt, ptPar, pageAtt, pagePar, distAttMax, nom, pos, inventaire, effets);
         this.nbFleches = nbFleches;
         this.setLettre("A");
@@ -45,6 +45,58 @@ public class Archer extends Personnage implements Combattant {
     public Archer() {
         this.nbFleches = 8;
         this.setLettre("A");
+        String[] listeNoms = {
+            "Lorand",
+            "Elara",
+            "Thalion",
+            "Faelan",
+            "Niamh",
+            "Sylas",
+            "Aeliana",
+            "Rowan",
+            "Caelum",
+            "Iliad",
+            "Seraphina",
+            "Hawthorn",
+            "Elysia",
+            "Brynden",
+            "Aria",
+            "Gaelan",
+            "Lyria",
+            "Draven",
+            "Calista",
+            "Soren",
+            "Evadne",
+            "Finnian",
+            "Thalassa",
+            "Eowyn",
+            "Cyrus",
+            "Valeria",
+            "Riven",
+            "Aurora",
+            "Raelin",
+            "Sylvan",
+            "Isolde",
+            "Kael",
+            "Ysolde",
+            "Thorne",
+            "Lysandra",
+            "Silas",
+            "Maelis",
+            "Vaelora",
+            "Ossian",
+            "Elysande",
+            "Elian",
+            "Elowen",
+            "Caelia",
+            "Lorian",
+            "Elyndra",
+            "Faelanor",
+            "Vespera",
+            "Caelith"
+        };
+        nomAlea(listeNoms);
+        this.setDistAttMax(4);
     }
 
     /**
@@ -114,6 +166,7 @@ public class Archer extends Personnage implements Combattant {
                 }
             }
         } else if (getPos().distance(c.getPos()) <= getDistAttMax()) {
+            if(nbFleches > 0){
             if (jce) {
                 System.out.println(getNom() + " tente une attaque à distance sur " + c.toString());
             }
@@ -134,6 +187,8 @@ public class Archer extends Personnage implements Combattant {
                 }
                 c.setPtVie(c.getPtVie() - getDegAtt(), this);
             }
+        }}else if(jce){
+            System.out.println("Impossible ! Vous n'avez plus de flèches");
         }
     }
 

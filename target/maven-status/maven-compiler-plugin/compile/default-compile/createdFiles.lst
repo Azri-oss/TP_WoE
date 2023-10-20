@@ -15,6 +15,7 @@ org\centrale\objet\WoE\Lapin.class
 org\centrale\objet\WoE\Loup.class
 org\centrale\objet\WoE\ElementDeJeu.class
 org\centrale\objet\WoE\Epee.class
+org\centrale\objet\WoE\ElemInterface.class
 org\centrale\objet\WoE\Monstre.class
 org\centrale\objet\WoE\Archer.class
 org\centrale\objet\WoE\Utilisable.class

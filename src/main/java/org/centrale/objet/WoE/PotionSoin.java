@@ -4,20 +4,24 @@
  */
 package org.centrale.objet.WoE;
 
+import java.util.Random;
+
 /**
  *
  * @author 33651
  */
 /**
- * 
+ *
  * Classe de l'objet : Potion de soin
  */
-public class PotionSoin extends Objet implements Utilisable{
+public class PotionSoin extends Objet implements Utilisable {
+
     private int ptSoin;
-    private String lettre ="o";
+    private String lettre = "o";
 
     /**
-     *Constructeur principal
+     * Constructeur principal
+     *
      * @param ptSoin Nombre de points de vie soignés
      * @param nombre Nombre de potions
      * @param nom Nom de la potion
@@ -30,25 +34,28 @@ public class PotionSoin extends Objet implements Utilisable{
     }
 
     /**
-     *Constructeur par défaut
+     * Constructeur par défaut
      */
     public PotionSoin() {
-        this.ptSoin = 8;
+        Random g = new Random();
+        this.ptSoin = 15+g.nextInt(30);
         this.setNom("Potion de soin");
     }
 
     /**
-     *Constructeur de copie
+     * Constructeur de copie
+     *
      * @param ps Objet : Potion de Soin
      */
-    public PotionSoin(PotionSoin ps){
-    super((Objet) ps);
-    this.ptSoin= ps.getPtSoin();
-    this.setNom("Potion de soin");
-}
-    
+    public PotionSoin(PotionSoin ps) {
+        super((Objet) ps);
+        this.ptSoin = ps.getPtSoin();
+        this.setNom("Potion de soin");
+    }
+
     /**
      * Récupère le nombre de PV soigné
+     *
      * @return ptSoin Nombre de PV soigné
      */
     public int getPtSoin() {
@@ -57,6 +64,7 @@ public class PotionSoin extends Objet implements Utilisable{
 
     /**
      * Modifie le nombre de PV soigné
+     *
      * @param ptSoin Nombre de points de vie soignés
      */
     public void setPtSoin(int ptSoin) {
@@ -64,43 +72,86 @@ public class PotionSoin extends Objet implements Utilisable{
     }
 
     /**
-     *Methode qui augmente les PV de la créature qui prend la potion
+     * Methode qui augmente les PV de la créature qui prend la potion
+     *
      * @param pers Creature qui se soigne avec la potion
      */
     @Override
-    public void utiliser(Creature pers){
-        pers.setPtVie(getPtSoin()+pers.getPtVie());
+    public void utiliser(Creature pers) {
+        pers.setPtVie(getPtSoin() + pers.getPtVie());
     }
-        @Override
+
+    /**
+     * Indique les caractéristiques de la potion
+     *
+     * @return String affichage
+     */
+    @Override
     public String toString() {
         return "PotionSoin{" + "ptSoin=" + ptSoin + '}';
     }
 
+    /**
+     * Donne la lettre (initiale) de l'objet
+     *
+     * @return String lettre
+     */
+    @Override
     public String getLettre() {
         return lettre;
     }
 
+    /**
+     * Fixe la lettre de l'objet (pour l'affichage)
+     *
+     * @param lettre
+     */
+    @Override
     public void setLettre(String lettre) {
         this.lettre = lettre;
     }
-    
+
+    /**
+     * Donne proprement le nom et les caractéristiques de l'objet (pour
+     * l'affichage)
+     *
+     * @return String affiche
+     */
     @Override
-    public String affiche(){
-        return ("Une potion de soin octroyant "+this.getPtSoin()+ " PV");
+    public String affiche() {
+        return ("Une potion de soin octroyant " + this.getPtSoin() + " PV");
     }
 
+    /**
+     * Donne la durée de vie de l'objet (retourne -1 car une potion de vie a
+     * pour l'instant une consommation instantanée)
+     *
+     * @return -1
+     */
     @Override
     public int getDuree() {
         return -1;
     }
 
+    /**
+     * Fixe la durée de vie de l'objet (inutile pour l'instant, peut l'être par
+     * la suite du projet)
+     *
+     * @param i
+     */
     @Override
     public void setDuree(int i) {
     }
 
+    /**
+     * Dans le cas où l'on fixerait une durée aux potions de vie, alors cette
+     * méthode permettrait de supprimer l'effet de la potion après que sa durée
+     * de vie se soit écoulée
+     *
+     * @param c
+     */
     @Override
     public void finUtiliser(Creature c) {
     }
-    
-}
 
+}

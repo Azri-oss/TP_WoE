@@ -24,8 +24,8 @@ public class Lapin extends Monstre {
      * @param pagePar Pourcentage de reussite de parade
      * @param pos Position du lapin
      * @param distAttMax
-     * @param inventaire
-     * @param effets
+     * @param inventaire ArrayList comprenant les utilisables de l'inventaire
+     * @param effets ArrayList comprenant les utilisables en fonctionnement
      */
    public Lapin(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos, int distAttMax,ArrayList<Utilisable> inventaire,ArrayList<Utilisable> effets) {
         super(ptVie, degAtt, ptPar, pageAtt, pagePar, pos, distAttMax, inventaire,effets);

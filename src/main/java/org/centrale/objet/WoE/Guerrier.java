@@ -26,9 +26,11 @@ public class Guerrier extends Personnage implements Combattant {
      * @param distAttMax Distance maximale d'attaque
      * @param nom Nom du guerrier
      * @param pos Position du guerrier
+     * @param inventaire ArrayList comprenant les utilisables de l'inventaire
+     * @param effets ArrayList comprenant les utilisables en fonctionnement
      */
-    public Guerrier(Epee arme, int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos,ArrayList<Utilisable> inventaire,ArrayList<Utilisable> effets) {
-        super(ptVie, degAtt, ptPar, pageAtt, pagePar, distAttMax, nom, pos,inventaire, effets);
+    public Guerrier(Epee arme, int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, int distAttMax, String nom, Point2D pos, ArrayList<Utilisable> inventaire, ArrayList<Utilisable> effets) {
+        super(ptVie, degAtt, ptPar, pageAtt, pagePar, distAttMax, nom, pos, inventaire, effets);
         this.arme = arme;
         this.setLettre("G");
     }
@@ -40,6 +42,31 @@ public class Guerrier extends Personnage implements Combattant {
         super();
         this.arme = new Epee();
         this.setLettre("G");
+        String[] listeNoms = {
+            "Aragorn", "Lysandra", "Thorgrim", "Elysia", "Draven",
+            "Seraphina", "Gorin", "Valka", "Thrain", "Azura",
+            "Hrothgar", "Elara", "Kael", "Rowan", "Sylas",
+            "Isolde", "Grimm", "Eilin", "Ragnor", "Selene",
+            "Fenrir", "Brynhild", "Kaldor", "Sylvari", "Gwynn",
+            "Caelan", "Brienne", "Rurik", "Daelia", "Korin",
+            "Elowen", "Valthrun", "Sigrid", "Lorelei", "Krom",
+            "Eirik", "Elysande", "Ulfgar", "Thalassa", "Branwen",
+            "Thorne", "Vespera", "Magnar", "Eowyn", "Haldor",
+            "Astrid", "Ragnarok", "Astraea", "Soren", "Morgana",
+            "Galdar", "Elowyn", "Sigrun", "Artemis", "Varian",
+            "Faelan", "Kaelith", "Grimbold", "Isabeau", "Draegon",
+            "Thyra", "Caelum", "Frost", "Aurelia", "Wolfram",
+            "Eowulf", "Thyri", "Vaelen", "Faelore", "Thorne",
+            "Elowen", "Ailin", "Kaelith", "Sylas", "Elysia",
+            "Thrain", "Valka", "Sigrun", "Brynhild", "Draegon",
+            "Thyra", "Seraphina", "Gorin", "Artemis", "Faelan",
+            "Magnar", "Astraea", "Isabeau", "Frost", "Vespera",
+            "Thorgrim", "Lorelei", "Kaldor", "Grimbold", "Thalassa",
+            "Eirik", "Astrid", "Rurik", "Eowyn", "Morgana",
+            "Caelan", "Ragnarok", "Ailin", "Galdar", "Sylvari",
+            "Varian", "Wolfram", "Eowulf", "Selene", "Gwynn"
+        };
+        nomAlea(listeNoms);
     }
 
     /**
@@ -108,15 +135,15 @@ public class Guerrier extends Personnage implements Combattant {
             }
         }
     }
+    
 
-
-/**
- *
- * @return La chaine de caractère : Guerrier
- */
-@Override
-public String toString() {
-        return (getNom()+" le Guerrier");
+    /**
+     *
+     * @return La chaine de caractère : nom + guerrier
+     */
+    @Override
+    public String toString() {
+        return (getNom() + " le Guerrier");
     }
 
 }

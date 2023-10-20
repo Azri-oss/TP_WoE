@@ -23,9 +23,9 @@ public class Loup extends Monstre implements Combattant {
      * @param pageAtt Pourcentage de reussite d'une attaque
      * @param pagePar Pourcentage de reussite d'une parade
      * @param pos position du loup
-     * @param distAttMax
-     * @param inventaire
-     * @param effets
+     * @param distAttMax Distance maximale d'attaque
+     * @param inventaire ArrayList comprenant les utilisables de l'inventaire
+     * @param effets ArrayList comprenant les utilisables en fonctionnement
      */
    public Loup(int ptVie, int degAtt, int ptPar, int pageAtt, int pagePar, Point2D pos, int distAttMax, ArrayList<Utilisable> inventaire,ArrayList<Utilisable> effets) {
         super(ptVie, degAtt, ptPar, pageAtt, pagePar, pos, distAttMax, inventaire,effets);
