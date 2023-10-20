@@ -57,7 +57,7 @@ public class Paysan extends Personnage {
      */
     @Override
     public String toString() {
-        return "Paysan";
+        return (getNom() + " le Paysan");
     }
     
     

@@ -177,6 +177,14 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
         }
     }
 
+    public void setPtVie(int ptVie, Creature c) {
+        this.ptVie = ptVie;
+        if (this.ptVie <= 0) {
+            System.out.println(this.toString() + " est mort(e), sous les coups de " + c.toString());
+            this.getPos().setX(-10);
+        }
+    }
+
     /**
      * Modifie les dégats d'attaque de la creature
      *
@@ -260,11 +268,8 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
     /**
      * public boolean caseAccessible(int dx, int dy) { return
      * ((this.getPos().getX() + dx >= 0) && (this.getPos().getX() + dx < World.LARGEUR) && (this.getPos().getY() + dy
-     * >= 0) && (this.getPos().getY() + dy < World.HAUTEUR));
-    }*
-     * @param w
+     * >= 0) && (this.getPos().getY() + dy < World.HAUTEUR)); }* @param w
      */
-
     @Override
     public void deplace(World w) {
         Random generateur = new Random();
@@ -281,7 +286,7 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
             }
         }
         if (compt > 0) {
-            int entierAleatoire = generateur.nextInt(compt)+1;
+            int entierAleatoire = generateur.nextInt(compt) + 1;
             int compt2 = 0;
             for (int j = 0; j < 8; j++) {
                 if (l[j] == 0) {
@@ -352,5 +357,19 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
     public void retirerinventaire(Utilisable o) {
         inventaire.remove(o);
 
+    }
+
+    public void majEffets() {
+        ArrayList<Utilisable> copie = new ArrayList<>();
+        for (Utilisable obj : effets){
+            copie.add(obj);
+        }
+        for (int i = 0; i < effets.size(); i++) {
+            if (effets.get(i).getDuree() == 0) {
+                effets.remove(i);
+            }
+            
+        }
+        copie = null;
     }
 }

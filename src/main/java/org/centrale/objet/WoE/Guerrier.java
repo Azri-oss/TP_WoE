@@ -99,12 +99,12 @@ public class Guerrier extends Personnage implements Combattant {
                 if (jce) {
                     System.out.println(c.toString() + "loupe sa parade et perd" + getDegAtt() + "PV");
                 }
-                c.setPtVie(c.getPtVie() - getDegAtt());
+                c.setPtVie(c.getPtVie() - getDegAtt(), this);
             } else {
                 if (jce) {
                     System.out.println(c.toString() + "réussit sa parade et perd" + (getDegAtt() - c.getPtPar()) + "PV");
                 }
-                c.setPtVie(c.getPtVie() - getDegAtt() + c.getPtPar());
+                c.setPtVie(c.getPtVie() - getDegAtt() + c.getPtPar(), this);
             }
         }
     }
@@ -116,7 +116,7 @@ public class Guerrier extends Personnage implements Combattant {
  */
 @Override
 public String toString() {
-        return "Guerrier";
+        return (getNom()+" le Guerrier");
     }
 
 }

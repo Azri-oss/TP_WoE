@@ -59,14 +59,12 @@ public class World {
 
     public boolean testCaseOccupeeObj(Utilisable o, ArrayList<Utilisable> objets) {
         for (Utilisable ob : objets) {
-            if ((ob.getPos().distance(o.getPos()) == 0 && !(o.equals(ob))) || (o.getPos().getX() >= LARGEUR )|| (o.getPos().getY() >= HAUTEUR )|| (o.getPos().getX() < 0) || (o.getPos().getY() < 0)) {
+            if ((ob.getPos().distance(o.getPos()) == 0 && !(o.equals(ob))) || (o.getPos().getX() >= LARGEUR) || (o.getPos().getY() >= HAUTEUR) || (o.getPos().getX() < 0) || (o.getPos().getY() < 0)) {
                 return true;
             }
         }
         return false;
     }
-    
-
 
     /**
      * Méthode creeMondeAlea : Génère des créatures dans l'array creatures, en
@@ -77,10 +75,9 @@ public class World {
     public void creeMondeAlea(Joueur joueur) {
         Random generateur = new Random();
         int[] nombres = new int[5];
-        int total = 100;
+        int total = 50;
         for (int i = 0; i < 5; i++) {
             nombres[i] = generateur.nextInt(total);
-            total = total - nombres[i];
         }
         for (int j = 0; j < nombres[0]; j++) {
             creatures.add(new Archer());
@@ -110,7 +107,7 @@ public class World {
         /**
          * int totalobj= nbcases-total-1;*
          */
-        int totobj = 20;
+        int totobj = 100;
         int[] nombresobj = new int[4];
         for (int i = 0; i < 4; i++) {
             nombresobj[i] = nbobj.nextInt(totobj);
@@ -130,17 +127,12 @@ public class World {
             objets.add(new Nourriture(val.nextInt(20) - 10, 3, 1, "Gateau", new Point2D()));
         }
         for (Utilisable ob : objets) {
-            System.out.println(ob.toString());
-            int compteur = 0;
             while (testCaseOccupeeObj(ob, objets)) {
-                compteur = compteur + 1;
-                System.out.println(compteur);
-                ob.setPos(new Point2D(generateur.nextInt(LARGEUR), generateur.nextInt(HAUTEUR)));
+                Random g = new Random();
+                ob.setPos(new Point2D(g.nextInt(LARGEUR), g.nextInt(HAUTEUR)));
 
             }
-            System.out.println("On sort du while");
         }
-        String t="re";
     }
 
     /**
@@ -209,15 +201,17 @@ public class World {
             choixactionPNJ(c);
         }
         this.affichage(jou);
-
-        for (Utilisable obj : jou.getPers().getEffets()) {
-            if (obj instanceof Nourriture) {
-                int dur = ((Nourriture) obj).getDuree();
-                if (dur < 1) {
-                    ((Nourriture) obj).setDuree(dur - 1);
+        for (Creature c : creatures) {
+            for (Utilisable obj : c.getEffets()) {
+                int dur = obj.getDuree();
+                if (dur > 0) {
+                    obj.setDuree(dur - 1);
                 } else {
-                    ((Nourriture) obj).finUtiliser(jou.getPers());
+                    obj.finUtiliser(c);
                 }
+            }
+            if (!c.getEffets().isEmpty()) {
+                c.majEffets();
             }
         }
         return tour + 1;
@@ -280,21 +274,21 @@ public class World {
 
                 case 0:
 
-                    System.out.println(c.getInventaire());
+                    //System.out.println(c.getInventaire());
                     int S = c.getInventaire().size();
-                    System.out.println(S);
+                    //System.out.println(S);
 
                     int choixobj = action.nextInt(S);
 
                     c.getInventaire().get(choixobj).utiliser(c);
-                    System.out.println("Le PNJ " + c.toString() + "utilise l'objet" + c.getInventaire().get(choixobj).getNom());
+                    //System.out.println("Le PNJ " + c.toString() + "utilise l'objet" + c.getInventaire().get(choixobj).getNom());
                     c.retirerinventaire(c.getInventaire().get(choixobj));
 
                     break;
 
                 case 1:
                     c.deplace(this);
-                    System.out.println("Le PNJ c'est déplacé en " + c.getPos());
+                    //System.out.println("Le PNJ c'est déplacé en " + c.getPos());
                     break;
 
                 case 2:
@@ -302,20 +296,20 @@ public class World {
                     ((Combattant) c).combattre(adv.get(vic));
                     break;
                 case 3:
-                    System.out.println("Le PNJ " + c.toString() + " a décidé de ne rien faire.");
+                    //System.out.println("Le PNJ " + c.toString() + " a décidé de ne rien faire.");
                     break;
                 case 4:
                     int choix2 = action.nextInt(2);
                     /* Ranger*/
                     if (choix2 == 0) {
                         c.ajoutinventaire(u, this);
-                        System.out.println("Le PNJ " + c.toString() + "a ajouté l'objet " + u.getNom() + "à son inventaire" + c.getInventaire());
+                        //System.out.println("Le PNJ " + c.toString() + "a ajouté l'objet " + u.getNom() + "à son inventaire" + c.getInventaire());
                     } /*Utiliser directement*/ else {
                         u.utiliser(c);
                         c.getEffets().add(u);
 
                         objets.remove(u);
-                        System.out.println("Le PNJ " + c.toString() + "a utilisé l'objet " + u.getNom());
+                        //System.out.println("Le PNJ " + c.toString() + "a utilisé l'objet " + u.getNom());
 
                     }
                     break;
@@ -330,6 +324,11 @@ public class World {
     public void affichage(Joueur joueur) {
         String s;
         Boolean r;
+        String space = "  ";
+        ArrayList<Utilisable> inventaire = joueur.getPers().getInventaire();
+        Iterator<Utilisable> listIt = inventaire.iterator();
+        ArrayList<Utilisable> effets = joueur.getPers().getEffets();
+        Iterator<Utilisable> listE = effets.iterator();
         for (int i = 0; i < HAUTEUR; i++) {
             s = "    ";
             for (int j = 0; j < LARGEUR; j++) {
@@ -340,24 +339,53 @@ public class World {
                         r = false;
                     }
                 }
-                /**if (r){
+
+                if (r) {
                     for (Utilisable obj : objets) {
-                    if ((obj.getPos().getX()) == j && (obj.getPos().getY() == HAUTEUR - 1 - i)) {
-                        s = s + obj.getLettre();
-                        r = false;
+                        if ((obj.getPos().getX()) == j && (obj.getPos().getY() == HAUTEUR - 1 - i)) {
+                            s = s + obj.getLettre();
+                            r = false;
+                        }
                     }
                 }
-                }**/
 
                 if (r) {
                     s = s + "_";
                 }
             }
-            if (i == 1) {
-                s = (s + "     Points de vie : " + joueur.getPers().getPtVie());
-            } else if (i == 3) {
-                s = (s + "     Points d'attaque : " + joueur.getPers().getDegAtt());
+
+            switch (i) {
+                case 1:
+                    s = (s + space + space + "Points de vie : " + joueur.getPers().getPtVie());
+                    break;
+                case 2:
+                    s = (s + space + space + "Points d'attaque : " + joueur.getPers().getDegAtt());
+                    break;
+                case 3:
+                    s = (s + space + space + "Pourcentage de réussite d'attaque : " + joueur.getPers().getPageAtt() + "%");
+                    break;
+                case 4:
+                    s = (s + space + space + "Pourcentage de réussite de contre : " + joueur.getPers().getPagePar() + "%");
+                    break;
+                case 6:
+                    s = (s + space + space + "INVENTAIRE");
+                    break;
+                case 13:
+                    s = (s + space + space + "EFFETS");
+                    break;
             }
+            if (i > 6 && listIt.hasNext() && i <= 12) {
+                s = (s + space + space + space + "- " + listIt.next().affiche());
+            } else if (i == 7) {
+                s = (s + space + space + space + "(vide)");
+            }
+            if (i > 13 && listE.hasNext() && i <= 22) {
+                Utilisable ut = listE.next();
+                s = (s + space + space + space + "- " + ut.affiche() + " (" + ut.getDuree() + " tours restants)");
+            } else if (i == 14) {
+                s = (s + space + space + space + "(vide)");
+            }
+
             System.out.println(s);
         }
     }

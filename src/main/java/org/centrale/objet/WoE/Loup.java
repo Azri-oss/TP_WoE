@@ -77,12 +77,12 @@ public class Loup extends Monstre implements Combattant {
                 if (jce) {
                     System.out.println(c.toString() + "loupe sa parade et perd" + getDegAtt() + "PV");
                 }
-                c.setPtVie(c.getPtVie() - getDegAtt());
+                c.setPtVie(c.getPtVie() - getDegAtt(), this);
             } else {
                 if (jce) {
                     System.out.println(c.toString() + "réussit sa parade et perd" + (getDegAtt() - c.getPtPar()) + "PV");
                 }
-                c.setPtVie(c.getPtVie() - getDegAtt() + c.getPtPar());
+                c.setPtVie(c.getPtVie() - getDegAtt() + c.getPtPar(), this);
             }
         }
     }

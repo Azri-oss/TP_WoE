@@ -26,6 +26,7 @@ public class PotionSoin extends Objet implements Utilisable{
     public PotionSoin(int ptSoin, int nombre, String nom, Point2D pos) {
         super(nombre, nom, pos);
         this.ptSoin = ptSoin;
+        this.setNom("Potion de soin");
     }
 
     /**
@@ -33,6 +34,7 @@ public class PotionSoin extends Objet implements Utilisable{
      */
     public PotionSoin() {
         this.ptSoin = 8;
+        this.setNom("Potion de soin");
     }
 
     /**
@@ -42,6 +44,7 @@ public class PotionSoin extends Objet implements Utilisable{
     public PotionSoin(PotionSoin ps){
     super((Objet) ps);
     this.ptSoin= ps.getPtSoin();
+    this.setNom("Potion de soin");
 }
     
     /**
@@ -81,6 +84,23 @@ public class PotionSoin extends Objet implements Utilisable{
         this.lettre = lettre;
     }
     
+    @Override
+    public String affiche(){
+        return ("Une potion de soin octroyant "+this.getPtSoin()+ " PV");
+    }
+
+    @Override
+    public int getDuree() {
+        return -1;
+    }
+
+    @Override
+    public void setDuree(int i) {
+    }
+
+    @Override
+    public void finUtiliser(Creature c) {
+    }
     
 }
 

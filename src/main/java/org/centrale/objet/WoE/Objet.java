@@ -66,6 +66,10 @@ public abstract class Objet extends ElementDeJeu{
     public Point2D getPos() {
         return pos;
     }
+    
+    public void setPos(Point2D pos){
+        this.pos = pos;
+    }
 
     /**
      *Modifie la quantité d'un objet

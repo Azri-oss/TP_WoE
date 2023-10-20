@@ -20,12 +20,11 @@ public class ProjetTP {
         int tours = 20;
         int t =0;
         
-        Joueur jou= new Joueur();
+        Joueur j= new Joueur();
         
-        //Joueur jou= j.choixperso();
+        Joueur jou= j.choixperso();
         w.creeMondeAlea(jou);
         
-        t = 1;
         w.affichage(jou);
         
         while(t<tours){
