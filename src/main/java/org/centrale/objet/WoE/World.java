@@ -4,6 +4,11 @@
  */
 package org.centrale.objet.WoE;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Random;
 import java.util.*;
 
@@ -25,24 +30,30 @@ public class World {
     /**
      * Constante de la HAUTEUR du monde
      */
-    public static final int HAUTEUR = 20;
+    public static int HAUTEUR = 20;
     /**
      * Constante de la LARGEUR du monde
      */
-    public static final int LARGEUR = 70;
+    public static int LARGEUR = 70;
 
     /**
      * Liste des nuages (deprecié)
      */
     public ArrayList<NuageToxique> nuages;
+    
+    /**
+     *Entier décrivant le numéro du tour de jeu
+     */
+    public int tour;
 
     /**
      * Méthode testPresence : renvoie true si la position de p est déjà
-     * enregistrée dans l'array positions
+     * enregistrée dans l'array creatures
      *
-     * @param c
-     * @param creatures
-     * @return boolean
+     * @param c Element de jeu dont la position est testée
+     * @param creatures Liste des créatures présentes dans le monde, contenant les positions à comparer
+     * @return boolean : true si et seulement si la position de p est déjà
+     * enregistrée dans l'array creatures
      */
     public boolean testCaseOccupeePerso(ElementDeJeu c, ArrayList<Creature> creatures) {
         for (Creature creature : creatures) {
@@ -60,7 +71,7 @@ public class World {
      * @param p Point2D de la position souhaitée
      * @param c Creature se déplaçant
      * @param creatures ArrayList comprenant toutes les créatures
-     * @return boolean
+     * @return boolean : false si la case où la créature souhaite se déplacer est accessible
      */
     public boolean testCaseOccupeePerso(Point2D p, Creature c, ArrayList<Creature> creatures) {
         for (Creature creature : creatures) {
@@ -77,7 +88,7 @@ public class World {
      *
      * @param o Objet à tester
      * @param objets Liste des objets sur le monde
-     * @return boolean
+     * @return boolean : true si la case est occupée par un objet
      */
     public boolean testCaseOccupeeObj(Utilisable o, ArrayList<Utilisable> objets) {
         for (Utilisable ob : objets) {
@@ -92,7 +103,7 @@ public class World {
      * Méthode creeMondeAlea : Génère des créatures dans l'array creatures, en
      * évitant que deux entités aient la même position
      *
-     * @param joueur
+     * @param joueur instance de la classe Joueur
      */
     public void creeMondeAlea(Joueur joueur) {
         Random generateur = new Random();
@@ -131,6 +142,7 @@ public class World {
          */
         int totobj = 100;
         int[] nombresobj = new int[4];
+        int nombreNuage = nbobj.nextInt(10);
         for (int i = 0; i < 4; i++) {
             nombresobj[i] = nbobj.nextInt(totobj);
             totobj = totobj - nombresobj[i];
@@ -154,6 +166,13 @@ public class World {
                 ob.setPos(new Point2D(g.nextInt(LARGEUR), g.nextInt(HAUTEUR)));
 
             }
+        }
+        for(int j = 0; j<nombreNuage;j++){
+            nuages.add(new NuageToxique());
+        }
+        for (NuageToxique nuage : nuages){
+            Random g = new Random();
+            nuage.setPos(new Point2D(g.nextInt(LARGEUR), g.nextInt(HAUTEUR)));
         }
     }
 
@@ -208,14 +227,13 @@ public class World {
      * Méthode tourDeJeu : Annonce le début du tour, fait la phase de
      * déplacement et lance les combats
      *
-     * @param tour
-     * @param jou
+     * @param tour entier décrivant le numéro de tour de jeu
+     * @param jou Joueur
      * @return tour+1
      */
     public int tourDeJeu(int tour, Joueur jou) {
         this.affichage(jou);
         System.out.println("Début du tour " + tour);
-        
 
         System.out.println("Action du joueur ...");
         jou.choixaction(this);
@@ -224,7 +242,7 @@ public class World {
         for (Creature c : creatures) {
             choixactionPNJ(c);
         }
-        
+
         for (Creature c : creatures) {
             for (Utilisable obj : c.getEffets()) {
                 int dur = obj.getDuree();
@@ -246,7 +264,7 @@ public class World {
      * aléatoirement une action en fonction des possibilités que lui offre sa
      * position
      *
-     * @param c
+     * @param c Creature non joueuse qui s'apprête à jouer
      */
     public void choixactionPNJ(Creature c) {
 
@@ -299,8 +317,7 @@ public class World {
             /*attaque ou pas*/
             choix.add(3);
 
-
-            if (posscombat == 1 && (action.nextInt(100)<40)) {
+            if (posscombat == 1 && (action.nextInt(100) < 40)) {
                 int vic = action.nextInt(adv.size());
                 ((Combattant) c).combattre(adv.get(vic));
             } else {
@@ -357,7 +374,7 @@ public class World {
      * lettre initiale, et chaque objet par la lettre "o". Affiche également les
      * caractéristiques du joueur, son inventaire et ses effets.
      *
-     * @param joueur
+     * @param joueur Joueur 
      */
     public void affichage(Joueur joueur) {
         String s;
@@ -386,6 +403,14 @@ public class World {
                         }
                     }
                 }
+                if (r) {
+                    for (NuageToxique nuage : nuages) {
+                        if ((nuage.getPos().getX()) == j && (nuage.getPos().getY() == HAUTEUR - 1 - i)) {
+                            s = s + nuage.getLettre();
+                            r = false;
+                        }
+                    }
+                }
 
                 if (r) {
                     s = s + "_";
@@ -406,9 +431,10 @@ public class World {
                     s = (s + space + space + "Pourcentage de réussite de contre : " + joueur.getPers().getPagePar() + "%");
                     break;
                 case 5:
-                    if(joueur.getType().equals("Archer")){
-                        s = (s + space + space + "Nombre de flèches : "+((Archer)joueur.getPers()).getNbFleches());
+                    if (joueur.getType().equals("Archer")) {
+                        s = (s + space + space + "Nombre de flèches : " + ((Archer) joueur.getPers()).getNbFleches());
                     }
+                    break;
                 case 6:
                     s = (s + space + space + "INVENTAIRE");
                     break;
@@ -433,8 +459,8 @@ public class World {
     }
 
     /**
-     *
-     * @param tour
+     *Pas encore implantée
+     * @param tour tour de jeu
      */
     public void progressionNuage(int tour) {
 
@@ -444,7 +470,7 @@ public class World {
      * Vérifie si l'ensemble des créatures sont mortes : si c'est le cas,
      * renvoie true
      *
-     * @return boolean
+     * @return boolean : true si toutes les créatures non joueuses sont mortes
      */
     public boolean testVictoire() {
         for (Creature c : creatures) {
@@ -464,6 +490,276 @@ public class World {
         creatures = new ArrayList<>();
         objets = new ArrayList<>();
         nuages = new ArrayList<>();
+    }
+
+    /**
+     * Save world to database
+     *
+     * @param connection Connection à la bdd
+     * @param gameName String nom de la partie
+     * @param saveName String nom de la sauvegarde (devient "Sauvegarde rapide" si null)
+     * @param date Timestamp contenant la date temporelle de la sauvegarde
+     */
+    public void saveToDatabase(Connection connection, String gameName, String saveName, Timestamp date) {
+        if (connection != null) {
+            try {
+                String query = "INSERT INTO monde (param) VALUES ("+tour+")";
+                PreparedStatement stmt = connection.prepareStatement(query);
+                stmt.executeUpdate();
+                String query1 = "SELECT MAX(id_monde) FROM monde";
+                stmt = connection.prepareStatement(query1);
+                ResultSet rs = stmt.executeQuery();
+                rs.next();
+                int idMonde = rs.getInt(1);
+                for (Utilisable element : objets) {
+                    element.saveToDatabase(connection, idMonde);
+                }
+                for (Creature element : creatures) {
+                    element.saveToDatabase(connection, idMonde);
+                }
+                if (saveName == null) {
+                    query = "INSERT INTO sauvegarde (date, nom_partie, est_rapide, id_monde) "
+                            + "VALUES (?,?,1,?)";
+                    stmt = connection.prepareStatement(query);
+                    stmt.setTimestamp(1, date);
+                    stmt.setString(2, gameName);
+                    stmt.setInt(3, idMonde);
+                    stmt.executeUpdate();
+                } else {
+                    query = "INSERT INTO sauvegarde (date, nom_partie, est_rapide, id_monde, nom) "
+                            + "VALUES (?,?,0,?,?)";
+                    stmt = connection.prepareStatement(query);
+                    stmt.setTimestamp(1, date);
+                    stmt.setString(2, gameName);
+                    stmt.setInt(3, idMonde);
+                    stmt.setString(4, saveName);
+                    stmt.executeUpdate();
+                }
+            } catch (SQLException ex) {
+                System.err.println("SQL Exception " + ex.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Get world from database
+     *
+     * @param connection Connection à la bdd
+     * @param idSauvegarde Identifiant de la sauvegarde dans la bdd
+     * @param joueur instance de Joueur
+     */
+    public void getFromDatabase(Connection connection, int idSauvegarde, Joueur joueur) {
+        if (connection != null) {
+            // Remove old data
+            try {
+                String query1 = "SELECT m.id_monde, nom_partie, param FROM sauvegarde s JOIN monde m ON m.id_monde = s.id_monde WHERE id_sauvegarde=?";
+                PreparedStatement stmt = connection.prepareStatement(query1);
+                stmt.setInt(1, idSauvegarde);
+                ResultSet res = stmt.executeQuery();
+                res.next();
+                int idMonde = res.getInt(1)+1;
+                tour = res.getInt(3);
+                String query2 = "SELECT longueur, largeur FROM partie WHERE nom_partie=?";
+                stmt = connection.prepareStatement(query2);
+                stmt.setString(1, res.getString(2));
+                ResultSet rs = stmt.executeQuery();
+                rs.next();
+                this.setHeightWidth(rs.getInt(1), rs.getInt(2));
+
+                String queryHuma = "SELECT type, pos_x, pos_y, creature.id_creature, est_jouable, nb_fleches, pv, deg_att, page_att, pt_par, page_par, dist_att_max, nom FROM creature JOIN humanoide ON creature.id_creature = humanoide.id_creature WHERE id_monde=?";
+                stmt = connection.prepareStatement(queryHuma);
+                stmt.setInt(1, idMonde);
+                ResultSet humas = stmt.executeQuery();
+                System.out.println(idMonde);
+                while (humas.next()) {
+                    String queryObjets = "SELECT nom, actif,duree, b_deg_att,b_page_par,b_page_att,b_pv FROM objet o JOIN possede p ON o.id_objet = p.id_objet WHERE id_creature = " + humas.getInt(4) + "";
+                    ArrayList<Utilisable> Inventaire = new ArrayList<>();
+                    ArrayList<Utilisable> Effets = new ArrayList<>();
+                    PreparedStatement stmt2 = connection.prepareStatement(queryObjets);
+                    ResultSet rsObj = stmt2.executeQuery();
+                    while (rsObj.next()) {
+                        int actif = rsObj.getInt(2);
+                        //System.out.println(rsObj.getInt(7));
+                        if(rsObj.getInt(7) != 0){
+                                System.out.println("ps activé");
+                                PotionSoin ps = new PotionSoin(rsObj.getInt(7), 1, rsObj.getString(1), new Point2D(-1, -1));
+                                if (actif == 1) {
+                                    Effets.add(ps);
+                                } else {
+                                    Inventaire.add(ps);
+                                }
+                        } else if (rsObj.getInt(6)!=0){
+                                Nourriture nour = new Nourriture(rsObj.getInt(6), rsObj.getInt(3), 1, rsObj.getString(1), new Point2D(-1, -1));
+                                if (actif == 1) {
+                                    Effets.add(nour);
+                                } else {
+                                    Inventaire.add(nour);
+                                }
+                        } else if (rsObj.getInt(5)!=0){
+                                Nourriture n2 = new Nourriture(rsObj.getInt(5), rsObj.getInt(3), 1, rsObj.getString(1), new Point2D(-1, -1));
+                                if (actif == 1) {
+                                    Effets.add(n2);
+                                } else {
+                                    Inventaire.add(n2);
+                                }
+                        }else{
+                                Epee ep = new Epee(rsObj.getInt(4), 1, rsObj.getString(1), new Point2D(-1, -1));
+                                ep.setDuree(rsObj.getInt(3));
+                                if (actif == 1) {
+                                    Effets.add(ep);
+                                } else {
+                                    Inventaire.add(ep);
+                                }
+                        }
+                    }
+                    for(int i =0; i<Inventaire.size(); i++){
+                        System.out.println(Inventaire.get(i).getNom());
+                    }
+                    System.out.println("Fin for pour"+humas.getString(13));
+                    for(int i =0; i<Effets.size(); i++){
+                        System.out.println(Effets.get(i).getNom());
+                    }
+                    System.out.println("Fin for pour"+humas.getString(13));
+                    
+                    
+                    Personnage Human;
+                    switch (humas.getString(1)) {
+                        case "Archer":
+                            Human = new Archer(humas.getInt(6), humas.getInt(7), humas.getInt(8), humas.getInt(10), humas.getInt(9), humas.getInt(11), humas.getInt(12), humas.getString(13), new Point2D(humas.getInt(2), humas.getInt(3)), Inventaire, Effets);
+                            break;
+                        case "Guerrier":
+                            Epee ep = new Epee();
+                            Human = new Guerrier(ep, humas.getInt(7), humas.getInt(8), humas.getInt(10), humas.getInt(9), humas.getInt(11), humas.getInt(12), humas.getString(13), new Point2D(humas.getInt(2), humas.getInt(3)), Inventaire, Effets);
+                            break;
+                        default:
+                            Human = new Paysan(humas.getInt(7), humas.getInt(8), humas.getInt(10), humas.getInt(9), humas.getInt(11), humas.getInt(12), humas.getString(13), new Point2D(humas.getInt(2), humas.getInt(3)), Inventaire, Effets);
+                            break;
+                    }
+                    if (humas.getInt(5) == 1) {
+                        joueur.setPers(Human);
+                        joueur.setType(humas.getString(1));
+                        Human.setEstJoueur(true);
+                        Human.setLettre("J");
+                        System.out.println("idCreature = "+humas.getInt(4));
+                    }
+                    this.creatures.add(Human);
+                    
+
+                }System.out.println(((Personnage)creatures.get(creatures.size()-1)).getNom());
+
+//System.out.println(creatures.get(creatures.size()-1).getInventaire().get(creatures.get(creatures.size()-1).getInventaire().size()-2));
+                                       //System.out.println(creatures.get(creatures.size()-1).getInventaire().get(creatures.get(creatures.size()-1).getInventaire().size()-1));
+
+                String queryMons = "SELECT nom, pos_x, pos_y, creature.id_creature, pv, deg_att, page_att, pt_par, page_par, dist_att_max FROM creature JOIN monstre ON creature.id_creature = monstre.id_creature WHERE id_monde=?";
+                stmt = connection.prepareStatement(queryMons);
+                stmt.setInt(1, idMonde);
+                ResultSet mons = stmt.executeQuery();
+                while (mons.next()) {
+                    String nom = mons.getString(1);
+                    Point2D pos = new Point2D(mons.getInt(2), mons.getInt(3));
+                    int idCreature = mons.getInt(4);
+                    int pv = mons.getInt(5);
+                    int degAtt = mons.getInt(6);
+                    int pageAtt = mons.getInt(7);
+                    int ptPar = mons.getInt(8);
+                    int pagePar = mons.getInt(9);
+                    int distAttMax = mons.getInt(10);
+
+                    String queryObjets = "SELECT nom, actif,duree, b_deg_att,b_page_par,b_page_att,b_pv FROM objet o JOIN possede p ON o.id_objet = p.id_objet WHERE id_creature = " + idCreature + "";
+                    ArrayList<Utilisable> Inventaire = new ArrayList<>();
+                    ArrayList<Utilisable> Effets = new ArrayList<>();
+                    PreparedStatement stmt2 = connection.prepareStatement(queryObjets);
+                    ResultSet rsObj = stmt2.executeQuery();
+                    while (rsObj.next()) {
+                        int actif = rsObj.getInt(2);
+                        switch (rsObj.getString(1)) {
+                            case "Potion de Soin":
+                                PotionSoin ps = new PotionSoin(rsObj.getInt(7), 1, rsObj.getString(1), new Point2D(-1, -1));
+                                if (actif == 1) {
+                                    Effets.add(ps);
+                                } else {
+                                    Inventaire.add(ps);
+                                }
+                                break;
+                            case "Gateau":
+                                Nourriture nour = new Nourriture(rsObj.getInt(6), rsObj.getInt(3), 1, rsObj.getString(1), new Point2D(-1, -1));
+                                if (actif == 1) {
+                                    Effets.add(nour);
+                                } else {
+                                    Inventaire.add(nour);
+                                }
+                                break;
+                            case "Legumes":
+                                Nourriture n2 = new Nourriture(rsObj.getInt(5), rsObj.getInt(3), 1, rsObj.getString(1), new Point2D(-1, -1));
+                                if (actif == 1) {
+                                    Effets.add(n2);
+                                } else {
+                                    Inventaire.add(n2);
+                                }
+                                break;
+                            default:
+                                Epee ep = new Epee(rsObj.getInt(4), 1, rsObj.getString(1), new Point2D(-1, -1));
+                                ep.setDuree(rsObj.getInt(3));
+                                if (actif == 1) {
+                                    Effets.add(ep);
+                                } else {
+                                    Inventaire.add(ep);
+                                }
+                                break;
+                        }}
+                        Monstre Monster;
+                        switch (nom) {
+                            case "loup":
+                                Monster = new Loup(pv, degAtt, ptPar, pageAtt, pagePar, pos, distAttMax, Inventaire, Effets);
+                                Monster.setLettre("W");
+                                break;
+                            default:
+                                Monster = new Lapin(pv, degAtt, ptPar, pageAtt, pagePar, pos, distAttMax, Inventaire, Effets);
+                                Monster.setLettre("L");
+                                break;
+                        }
+                        this.creatures.add(Monster);
+                    }
+                    String queryObj = "SELECT nom, pos_x, pos_y, b_deg_att, b_page_par, b_page_att, b_pv, duree FROM comporte_obj c JOIN objet ON objet.id_objet = c.id_objet WHERE id_monde="+idMonde;
+                    PreparedStatement stmtObjs = connection.prepareStatement(queryObj);
+                    ResultSet resObjs = stmtObjs.executeQuery();
+                    while (resObjs.next()) {
+                        String nomO = resObjs.getString(1);
+                        Point2D posO = new Point2D(resObjs.getInt(2), resObjs.getInt(3));
+                        int bDegAtt = resObjs.getInt(4);
+                        int bPagePar = resObjs.getInt(5);
+                        int bPageAtt = resObjs.getInt(6);
+                        int bPV = resObjs.getInt(7);
+                        int dureeO = resObjs.getInt(8);
+
+                        Utilisable obj;
+                        switch (resObjs.getString(1)) {
+                            case "Potion de soin":
+                                obj = new PotionSoin(bPV, 1, nomO, posO);
+                                break;
+                            case "Legumes":
+                                obj = new Nourriture(bPagePar, dureeO, 1, nomO, posO);
+                                break;
+                            case "Gateau":
+                                obj = new Nourriture(bPageAtt, dureeO, 1, nomO, posO);
+                                break;
+                            default:
+                                obj = new Epee(bDegAtt, 1, nomO, posO);
+                                ((Epee) obj).setDuree(dureeO);
+                        }
+                        this.objets.add(obj);
+                    }
+                
+
+            } catch (SQLException ex) {
+                System.err.println("SQL Exception " + ex.getMessage());
+            }
+        
+    }}
+
+    private void setHeightWidth(int aInt, int aInt0) {
+        HAUTEUR = aInt;
+        LARGEUR = aInt0;
     }
 
 }

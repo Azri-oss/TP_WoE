@@ -4,15 +4,15 @@
  */
 package org.centrale.objet.WoE;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Random;
 
 /**
- *
- * @author 33651
- */
-/**
- *
  * Classe de l'objet : Potion de soin
+ * @author 33651
  */
 public class PotionSoin extends Objet implements Utilisable {
 
@@ -27,7 +27,7 @@ public class PotionSoin extends Objet implements Utilisable {
      * @param nom Nom de la potion
      * @param pos Position de la potion dans le monde
      */
-    public PotionSoin(int ptSoin, int nombre, String nom, Point2D pos) {
+    public PotionSoin(int ptSoin, int nombre,String nom, Point2D pos) {
         super(nombre, nom, pos);
         this.ptSoin = ptSoin;
         this.setNom("Potion de soin");
@@ -38,7 +38,7 @@ public class PotionSoin extends Objet implements Utilisable {
      */
     public PotionSoin() {
         Random g = new Random();
-        this.ptSoin = 15+g.nextInt(30);
+        this.ptSoin = 15 + g.nextInt(30);
         this.setNom("Potion de soin");
     }
 
@@ -152,6 +152,32 @@ public class PotionSoin extends Objet implements Utilisable {
      */
     @Override
     public void finUtiliser(Creature c) {
+    }
+
+    /**
+     *Méthode de sauvegarde de l'élément dans la bdd
+     * @param connection Connection à la bdd
+     * @param idMonde Identifiant du monde dans la bdd
+     */
+    @Override
+    public void saveToDatabase(Connection connection, int idMonde) {
+        try {
+            String query = "INSERT INTO objet (nom, b_pv)"
+                    + "VALUES ('Potion de soin'," + ptSoin + ")";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.executeUpdate();
+            String query1 = "SELECT MAX(id_objet) FROM objet";
+            stmt = connection.prepareStatement(query1);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            int idObjet = rs.getInt(1);
+            query = "INSERT INTO comporte_obj (id_objet, id_monde, pos_x, pos_y)"
+                    + "VALUES ('" + idObjet + "'," + idMonde + ",'" + getPos().getX() + "','" + getPos().getY() + "')";
+            stmt = connection.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception " + ex.getMessage());
+        }
     }
 
 }

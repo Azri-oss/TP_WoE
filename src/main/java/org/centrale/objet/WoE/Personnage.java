@@ -44,7 +44,7 @@ public abstract class Personnage extends Creature {
     /**
      * Constructeur de personnage à partir d'un personnage
      *
-     * @param pers personnage
+     * @param pers personnage à copier
      */
     public Personnage(Personnage pers) {
         super((Creature) pers);
@@ -70,6 +70,10 @@ public abstract class Personnage extends Creature {
         this.nom = nom;
     }
     
+    /**
+     *Donne un nom aléatoire au personnage à partir d'une liste
+     * @param listeNoms Liste de noms dans lequels on pioche aléatoirement
+     */
     public void nomAlea(String[] listeNoms){
         Random g = new Random();
         int max = listeNoms.length-1;

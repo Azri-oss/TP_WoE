@@ -1,5 +1,10 @@
 package org.centrale.objet.WoE;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *
  * @author 33651
@@ -43,7 +48,7 @@ public class Epee extends Objet implements Utilisable {
     /**
      * Constructeur de copie
      *
-     * @param e Epee
+     * @param e Epee à copier
      */
     public Epee(Epee e) {
         super((Objet) e);
@@ -89,7 +94,8 @@ public class Epee extends Objet implements Utilisable {
     }
 
     /**
-     *Modifie l'attaque du personnage et ajoute l'utilisable à l'array effets
+     * Modifie l'attaque du personnage et ajoute l'utilisable à l'array effets
+     *
      * @param c
      */
     @Override
@@ -99,7 +105,8 @@ public class Epee extends Objet implements Utilisable {
     }
 
     /**
-     *Donne la lettre de l'objet
+     * Donne la lettre de l'objet
+     *
      * @return String lettre
      */
     @Override
@@ -108,7 +115,8 @@ public class Epee extends Objet implements Utilisable {
     }
 
     /**
-     *Fixe la lettre de l'objet
+     * Fixe la lettre de l'objet
+     *
      * @param lettre
      */
     @Override
@@ -117,7 +125,8 @@ public class Epee extends Objet implements Utilisable {
     }
 
     /**
-     *Donne proprement le nom et les caractéristiques principales de l'objet
+     * Donne proprement le nom et les caractéristiques principales de l'objet
+     *
      * @return String affiche
      */
     @Override
@@ -126,7 +135,8 @@ public class Epee extends Objet implements Utilisable {
     }
 
     /**
-     *Donne la durée de vie restante de l'objet
+     * Donne la durée de vie restante de l'objet
+     *
      * @return int duree
      */
     @Override
@@ -135,7 +145,8 @@ public class Epee extends Objet implements Utilisable {
     }
 
     /**
-     *Modifie la durée de vie de l'objet
+     * Modifie la durée de vie de l'objet
+     *
      * @param duree
      */
     @Override
@@ -144,7 +155,8 @@ public class Epee extends Objet implements Utilisable {
     }
 
     /**
-     *Retire le bonus donné par l'objet et fixe sa durée à 0
+     * Retire le bonus donné par l'objet et fixe sa durée à 0
+     *
      * @param c
      */
     @Override
@@ -153,5 +165,31 @@ public class Epee extends Objet implements Utilisable {
         c.setDegAtt(c.getDegAtt() - BDegAtt);
     }
 
+    /**
+     *Méthode de sauvegarde de l'élément dans la bdd
+     * @param connection Connection à la bdd
+     * @param idMonde Identifiant du monde dans la bdd
+     */
+    @Override
+    public void saveToDatabase(Connection connection, int idMonde) {
+        try {
+            String query = "INSERT INTO objet (nom, b_deg_att, duree)"
+                    + "VALUES ('Epée'," + BDegAtt + ", " + duree + ")";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.executeUpdate();
+            String query1 = "SELECT MAX(id_objet) FROM objet";
+            stmt = connection.prepareStatement(query1);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            int idObjet = rs.getInt(1);
+            query = "INSERT INTO comporte_obj (id_objet, id_monde, pos_x, pos_y)"
+                    + "VALUES ('" + idObjet + "'," + idMonde + ",'" + getPos().getX() + "','" + getPos().getY() + "')";
+            stmt = connection.prepareStatement(query);
+            stmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception " + ex.getMessage());
+        }
     }
 
+}

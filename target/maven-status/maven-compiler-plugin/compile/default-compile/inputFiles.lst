@@ -1,10 +1,10 @@
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\ElemInterface.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Point2D.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\ElementDeJeu.java
+C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\DatabaseTools.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Paysan.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Utilisable.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Monstre.java
-C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Fleche.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Lapin.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Loup.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Personnage.java
@@ -15,9 +15,9 @@ C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Worl
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Joueur.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Nourriture.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Objet.java
-C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\ProjetTP.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\PotionSoin.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Epee.java
+C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\WoE.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Archer.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\NuageToxique.java
 C:\Users\noesa\Code\OBJET\TP2\ProjetTP\src\main\java\org\centrale\objet\WoE\Guerrier.java

@@ -1,5 +1,9 @@
 package org.centrale.objet.WoE;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -102,7 +106,7 @@ public class Guerrier extends Personnage implements Combattant {
     /**
      * Methode qui modélise le système de combat corps à corps
      *
-     * @param c Creature
+     * @param c Creature à combattre
      */
     @Override
     public void combattre(Creature c) {
@@ -144,6 +148,34 @@ public class Guerrier extends Personnage implements Combattant {
     @Override
     public String toString() {
         return (getNom() + " le Guerrier");
+    }
+    
+    /**
+     *Méthode de sauvegarde de l'élément dans la bdd
+     * @param connection Connection à la bdd
+     * @param idMonde Identifiant du monde dans la bdd
+     */
+    @Override
+    public void saveToDatabase(Connection connection, int idMonde) {
+        super.saveToDatabase(connection, idMonde);
+        try {
+            String query1 = "SELECT MAX(id_creature) FROM creature";
+            PreparedStatement stmt = connection.prepareStatement(query1);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            int idCreature =rs.getInt(1);
+            String query = "INSERT INTO humanoide (nom, type, est_jouable, id_creature)"
+                    + "VALUES ('"+ this.getNom()+"','Guerrier', ?,"+idCreature+")";
+            stmt = connection.prepareStatement(query);
+            if (isEstJoueur()){
+                stmt.setInt(1, 1);
+            } else {
+                stmt.setInt(1, 0);
+            }
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception " + ex.getMessage());
+        }
     }
 
 }

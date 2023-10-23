@@ -4,11 +4,18 @@
     <groupId>org.centrale</groupId>
     <artifactId>ProjetTP</artifactId>
     <version>0.1</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.4.0</version>
+        </dependency>
+    </dependencies>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <exec.mainClass>org.centrale.objet.WoE.ProjetTP</exec.mainClass>
+        <exec.mainClass>org.centrale.objet.WoE.WoE</exec.mainClass>
     </properties>
 </project>

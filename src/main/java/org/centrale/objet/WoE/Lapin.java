@@ -7,6 +7,10 @@
  */
 package org.centrale.objet.WoE;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 
@@ -42,7 +46,7 @@ public class Lapin extends Monstre {
 
     /**
      *Constructeur de copie
-     * @param l Lapin
+     * @param l Lapin à copier
      */
     public Lapin(Lapin l){
         super((Monstre)l);
@@ -58,5 +62,26 @@ public class Lapin extends Monstre {
         return "Lapin";
     }
     
+    /**
+     *Méthode de sauvegarde de l'élément dans la bdd
+     * @param connection Connection à la bdd
+     * @param idMonde Identifiant du monde dans la bdd
+     */
+    @Override
+    public void saveToDatabase(Connection connection, int idMonde) {
+        super.saveToDatabase(connection, idMonde);
+        try {
+            String query1 = "SELECT MAX(id_creature) FROM creature";
+            PreparedStatement stmt = connection.prepareStatement(query1);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            int idCreature =rs.getInt(1);
+            String query = "INSERT INTO monstre (nom, id_creature) VALUES ('lapin',"+idCreature+")";
+            stmt = connection.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception " + ex.getMessage());
+        }
+    }
     
 }

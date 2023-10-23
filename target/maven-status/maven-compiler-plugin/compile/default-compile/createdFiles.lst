@@ -2,7 +2,6 @@ org\centrale\objet\WoE\Creature.class
 org\centrale\objet\WoE\Paysan.class
 org\centrale\objet\WoE\Deplacable.class
 org\centrale\objet\WoE\Point2D.class
-org\centrale\objet\WoE\ProjetTP.class
 org\centrale\objet\WoE\World.class
 org\centrale\objet\WoE\Personnage.class
 org\centrale\objet\WoE\Joueur.class
@@ -15,8 +14,10 @@ org\centrale\objet\WoE\Lapin.class
 org\centrale\objet\WoE\Loup.class
 org\centrale\objet\WoE\ElementDeJeu.class
 org\centrale\objet\WoE\Epee.class
+org\centrale\objet\WoE\WoE.class
 org\centrale\objet\WoE\ElemInterface.class
 org\centrale\objet\WoE\Monstre.class
 org\centrale\objet\WoE\Archer.class
 org\centrale\objet\WoE\Utilisable.class
+org\centrale\objet\WoE\DatabaseTools.class
 org\centrale\objet\WoE\PotionSoin.class

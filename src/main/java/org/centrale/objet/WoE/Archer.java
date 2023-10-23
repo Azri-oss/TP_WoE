@@ -1,5 +1,9 @@
 package org.centrale.objet.WoE;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -132,7 +136,7 @@ public class Archer extends Personnage implements Combattant {
      * Methode combattre : active le système de combat à distance entre deux
      * créatures
      *
-     * @param c Creature
+     * @param c Creature à combattre
      */
     @Override
     public void combattre(Creature c) {
@@ -200,6 +204,34 @@ public class Archer extends Personnage implements Combattant {
     @Override
     public String toString() {
         return (getNom() + " l'Archer");
+    }
+    
+    /**
+     *Sauvegarde de l'archer sur la base de donnée
+     * @param connection Connection à la bdd
+     * @param idMonde Identifiant du monde dans la bdd
+     */
+    @Override
+    public void saveToDatabase(Connection connection, int idMonde) {
+        super.saveToDatabase(connection, idMonde);
+        try {
+            String query1 = "SELECT MAX(id_creature) FROM creature";
+            PreparedStatement stmt = connection.prepareStatement(query1);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            int idCreature= rs.getInt(1);
+            String query = "INSERT INTO humanoide (nom, type, est_jouable, id_creature, nb_fleches)"
+                    + "VALUES ('" + this.getNom() + "','Archer', ?," + idCreature + ","+nbFleches+")";
+            stmt = connection.prepareStatement(query);
+            if (isEstJoueur()){
+                stmt.setInt(1, 1);
+            } else {
+                stmt.setInt(1, 0);
+            }
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception " + ex.getMessage());
+        }
     }
 
 }

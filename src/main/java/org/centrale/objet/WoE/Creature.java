@@ -1,5 +1,9 @@
 package org.centrale.objet.WoE;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -72,7 +76,7 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
     /**
      * Constructeur de copie
      *
-     * @param c Creature
+     * @param c Creature à copier
      */
     public Creature(Creature c) {
         super((ElementDeJeu) c);
@@ -92,7 +96,7 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
     /**
      * Donne l'arrayList contenant les effets appliqués sur la créature
      *
-     * @return arrayList effets
+     * @return arrayList effets contenant les effets appliqués sur la créature
      */
     public ArrayList<Utilisable> getEffets() {
         return effets;
@@ -202,7 +206,7 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
     /**
      * Modifie les effets s'appliquant sur la créature
      *
-     * @param effets
+     * @param effets arrayList contenant les effets
      */
     public void setEffets(ArrayList<Utilisable> effets) {
         this.effets = effets;
@@ -226,8 +230,8 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
      * Modifie le nombre de points de vie d'une creature et indique qui l'a tuée
      * le cas échéant
      *
-     * @param ptVie
-     * @param c
+     * @param ptVie points de vie finaux
+     * @param c creature l'attaquand
      */
     public void setPtVie(int ptVie, Creature c) {
         this.ptVie = ptVie;
@@ -282,7 +286,7 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
     /**
      * Donne la lettre (initiale) de la créature (pour l'affichage)
      *
-     * @return lettre
+     * @return lettre : initiale de la créature
      */
     public String getLettre() {
         return lettre;
@@ -455,6 +459,9 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
 
     }
 
+    /**
+     *Méthode générant un objet aléatoire et le plaçant dans l'inventaire de la créature. S'active lorsqu'une créature en tue une autre
+     */
     public void loot() {
         Random g = new Random();
         int n = g.nextInt(100);
@@ -489,6 +496,61 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
                 effets.remove(i);
             }
 
+        }
+    }
+    
+    /**
+     *Sauvegarde la créature dans la base de données
+     * @param connection Connection à la bdd
+     * @param idMonde Identifiant du monde dans la bdd
+     */
+    @Override
+    public void saveToDatabase(Connection connection, int idMonde) {
+        try {
+            String query = "INSERT INTO creature (pos_x, pos_y, id_monde, pv, deg_att, page_att, pt_par, page_par, dist_att_max)"
+                    + "VALUES ('"+this.getPos().getX()+"','"+this.getPos().getY()+"',"+idMonde+",?,?,?,?,?,?)";
+            PreparedStatement stmt = connection.prepareStatement(query);
+
+            stmt.setInt(1,ptVie);
+            stmt.setInt(2,degAtt);
+            stmt.setInt(3,pageAtt);
+            stmt.setInt(4,ptPar);
+            stmt.setInt(5,pagePar);
+            stmt.setInt(6,distAttMax);
+            stmt.executeUpdate();
+            String query2 = "SELECT MAX(id_creature) FROM creature";
+                stmt = connection.prepareStatement(query2);
+                ResultSet rs = stmt.executeQuery();
+                rs.next();
+                int idCreature = rs.getInt(1);
+            
+            for (Utilisable obj : inventaire){
+                obj.saveToDatabase(connection, idMonde);
+                String query1 = "SELECT MAX(id_objet) FROM objet";
+                stmt = connection.prepareStatement(query1);
+                ResultSet result = stmt.executeQuery();
+                result.next();
+                int idObjet = result.getInt(1);
+                String query3 = "INSERT INTO possede (id_objet, id_creature, actif)"
+                    + "VALUES ("+idObjet+","+idCreature+",0)";
+                
+                stmt = connection.prepareStatement(query3);
+                stmt.executeUpdate();
+            }
+            for (Utilisable obj : effets){
+                obj.saveToDatabase(connection, idMonde);
+                String query1 = "SELECT MAX(id_objet) FROM objet";
+                stmt = connection.prepareStatement(query1);
+                ResultSet result = stmt.executeQuery();
+                result.next();
+                int idObjet = result.getInt(1);
+                String query3 = "INSERT INTO possede (id_objet, id_creature, actif)"
+                    + "VALUES ("+idObjet+","+idCreature+",1)";
+                stmt = connection.prepareStatement(query3);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception " + ex.getMessage());
         }
     }
 }

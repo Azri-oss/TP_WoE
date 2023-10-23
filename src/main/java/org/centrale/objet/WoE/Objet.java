@@ -29,13 +29,13 @@ public abstract class Objet extends ElementDeJeu{
     public Objet() {
         this.nombre = 1;
         this.nom = "Objet1";
-        Point2D pdep=new Point2D(2,4);
+        Point2D pdep=new Point2D(-1,-1);
         this.pos = pdep;
     }
     
     /**
      *Constructeur de copie
-     * @param o Objet
+     * @param o Objet à copier
      */
     public Objet(Objet o){
         this.nom=o.getNom();
@@ -92,6 +92,7 @@ public abstract class Objet extends ElementDeJeu{
     public void setNom(String nom) {
         this.nom = nom;
     }
+    
     
     
 
