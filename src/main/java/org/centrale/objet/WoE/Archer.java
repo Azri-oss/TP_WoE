@@ -153,7 +153,7 @@ public class Archer extends Personnage implements Combattant {
                 }
             } else {
                 if (jce) {
-                    System.out.println(getNom() + "a réussi son attaque");
+                    System.out.println(getNom() + " a réussi son attaque");
                     System.out.println(c.toString() + "tente de parer");
                 }
                 entierAleatoire = generateur.nextInt(100);
@@ -170,28 +170,29 @@ public class Archer extends Personnage implements Combattant {
                 }
             }
         } else if (getPos().distance(c.getPos()) <= getDistAttMax()) {
-            if(nbFleches > 0){
-            if (jce) {
-                System.out.println(getNom() + " tente une attaque à distance sur " + c.toString());
-            }
-            setNbFleches(nbFleches - 1);
-            if (jce) {
-                System.out.println(getNom() + " a maintenant " + nbFleches + " flèches");
-            }
-            Random generateur = new Random();
-            int entierAleatoire = generateur.nextInt(100);
-            if (entierAleatoire > getPageAtt()) {
+            if (nbFleches > 0) {
                 if (jce) {
-                    System.out.println(getNom() + " loupe son attaque");
+                    System.out.println(getNom() + " tente une attaque à distance sur " + c.toString());
                 }
-            } else {
+                setNbFleches(nbFleches - 1);
                 if (jce) {
-                    System.out.println(getNom() + "a réussi son attaque");
-                    System.out.println(c.toString() + " perd " + getDegAtt() + " PV");
+                    System.out.println(getNom() + " a maintenant " + nbFleches + " flèches");
                 }
-                c.setPtVie(c.getPtVie() - getDegAtt(), this);
+                Random generateur = new Random();
+                int entierAleatoire = generateur.nextInt(100);
+                if (entierAleatoire > getPageAtt()) {
+                    if (jce) {
+                        System.out.println(getNom() + " loupe son attaque");
+                    }
+                } else {
+                    if (jce) {
+                        System.out.println(getNom() + " a réussi son attaque");
+                        System.out.println(c.toString() + " perd " + getDegAtt() + " PV");
+                    }
+                    c.setPtVie(c.getPtVie() - getDegAtt(), this);
+                }
             }
-        }}else if(jce){
+        } else if (jce) {
             System.out.println("Impossible ! Vous n'avez plus de flèches");
         }
     }
@@ -205,9 +206,10 @@ public class Archer extends Personnage implements Combattant {
     public String toString() {
         return (getNom() + " l'Archer");
     }
-    
+
     /**
-     *Sauvegarde de l'archer sur la base de donnée
+     * Sauvegarde de l'archer sur la base de donnée
+     *
      * @param connection Connection à la bdd
      * @param idMonde Identifiant du monde dans la bdd
      */
@@ -219,11 +221,11 @@ public class Archer extends Personnage implements Combattant {
             PreparedStatement stmt = connection.prepareStatement(query1);
             ResultSet rs = stmt.executeQuery();
             rs.next();
-            int idCreature= rs.getInt(1);
+            int idCreature = rs.getInt(1);
             String query = "INSERT INTO humanoide (nom, type, est_jouable, id_creature, nb_fleches)"
-                    + "VALUES ('" + this.getNom() + "','Archer', ?," + idCreature + ","+nbFleches+")";
+                    + "VALUES ('" + this.getNom() + "','Archer', ?," + idCreature + "," + nbFleches + ")";
             stmt = connection.prepareStatement(query);
-            if (isEstJoueur()){
+            if (isEstJoueur()) {
                 stmt.setInt(1, 1);
             } else {
                 stmt.setInt(1, 0);

@@ -219,8 +219,8 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
      */
     public void setPtVie(int ptVie) {
         this.ptVie = ptVie;
-        if (this.ptVie <= 0) {
-            System.out.println(this.toString() + " est mort(e)");
+        if (this.ptVie <= 0 && vivant == true) {
+            System.out.println("(mort) " +this.toString() + " est mort(e)");
             this.getPos().setX(-10);
             vivant = false;
         }
@@ -235,11 +235,11 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
      */
     public void setPtVie(int ptVie, Creature c) {
         this.ptVie = ptVie;
-        if (this.ptVie <= 0) {
+        if (this.ptVie <= 0 && vivant == true) {
             if (c instanceof Monstre) {
-                System.out.println(this.toString() + " est mort(e), sous les coups d'un " + c.toString());
+                System.out.println("(mort) " +this.toString() + " est mort(e), sous les coups d'un " + c.toString());
             } else {
-                System.out.println(this.toString() + " est mort(e), sous les coups de " + c.toString());
+                System.out.println("(mort) " +this.toString() + " est mort(e), sous les coups de " + c.toString());
             }
             c.loot();
             this.getPos().setX(-10);
@@ -339,7 +339,7 @@ public abstract class Creature extends ElementDeJeu implements Deplacable {
 
                     this.setPos(new Point2D(this.getPos().getX() + i, this.getPos().getY() + j));
 
-                    if (w.testCaseOccupeePerso(this, w.creatures)) {
+                    if (w.testCaseOccupeePerso(this, w.creatures) || NuageToxique.testPresNuage(this.getPos(), w.nuages)) {
 
                         alentours[r] = 1;
 

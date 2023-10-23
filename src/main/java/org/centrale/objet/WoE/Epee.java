@@ -102,6 +102,7 @@ public class Epee extends Objet implements Utilisable {
     public void utiliser(Creature c) {
         c.setDegAtt(c.getDegAtt() + BDegAtt);
         c.getEffets().add(this);
+        this.setPos(new Point2D(-1,-1));
     }
 
     /**

@@ -142,7 +142,6 @@ public class World {
          */
         int totobj = 100;
         int[] nombresobj = new int[4];
-        int nombreNuage = nbobj.nextInt(10);
         for (int i = 0; i < 4; i++) {
             nombresobj[i] = nbobj.nextInt(totobj);
             totobj = totobj - nombresobj[i];
@@ -167,13 +166,13 @@ public class World {
 
             }
         }
-        for(int j = 0; j<nombreNuage;j++){
+        /**for(int j = 0; j<nombreNuage;j++){
             nuages.add(new NuageToxique());
         }
+        Point2D pos_nuages = new Point2D(nbobj.nextInt(LARGEUR), nbobj.nextInt(HAUTEUR));
         for (NuageToxique nuage : nuages){
-            Random g = new Random();
-            nuage.setPos(new Point2D(g.nextInt(LARGEUR), g.nextInt(HAUTEUR)));
-        }
+            nuage.setPos(new Point2D(pos_nuages));
+        }**/
     }
 
     /**
@@ -255,7 +254,30 @@ public class World {
             if (!c.getEffets().isEmpty()) {
                 c.majEffets();
             }
+            for(NuageToxique nuage : nuages){
+                nuage.setDegats(tour);
+                if(c.isVivant()){
+                    nuage.combattre(c);
+                }
+            }
         }
+        
+        if(tour == 3){
+            for(int i = 0;i<HAUTEUR;i++){
+                nuages.add(new NuageToxique(new Point2D(0, i)));
+                nuages.add(new NuageToxique(new Point2D(LARGEUR-1, i)));
+            }
+            for(int j = 1;j<LARGEUR-1;j++){
+                nuages.add(new NuageToxique(new Point2D(j, 0)));
+                nuages.add(new NuageToxique(new Point2D(j, HAUTEUR-1)));
+            }
+        } else if (tour%3==0 && tour != 0){
+            int n = nuages.size();
+            for(int i =0; i<n; i++){
+                nuages.get(i).spread(this);
+            }
+        }
+        
         return tour + 1;
     }
 
@@ -317,7 +339,7 @@ public class World {
             /*attaque ou pas*/
             choix.add(3);
 
-            if (posscombat == 1 && (action.nextInt(100) < 40)) {
+            if (posscombat == 1 && (action.nextInt(100) < 55)) {
                 int vic = action.nextInt(adv.size());
                 ((Combattant) c).combattre(adv.get(vic));
             } else {
@@ -458,13 +480,7 @@ public class World {
         }
     }
 
-    /**
-     *Pas encore implantée
-     * @param tour tour de jeu
-     */
-    public void progressionNuage(int tour) {
 
-    }
 
     /**
      * Vérifie si l'ensemble des créatures sont mortes : si c'est le cas,

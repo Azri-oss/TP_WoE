@@ -49,8 +49,7 @@ public class Point2D {
      * @param p Point2D
      */
     public Point2D(Point2D p) {
-        this.x = p.getX();
-        this.y = p.getY();
+        this(p.x, p.y);
     }
 
     
